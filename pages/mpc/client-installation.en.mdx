@@ -1,0 +1,108 @@
+# Pier Multi-Party Computation (MPC) Wallet as a Service SDK
+
+The Pier Multi-Party Computation (MPC) Wallet SDK allows you to create and manage wallets that leverage multi-party computation protocols for enhanced security and privacy. This documentation provides an overview of the API and its components to help you integrate and utilize the SDK effectively.
+
+## Installation
+
+To use the MPC Wallet SDK, you need to install it as a dependency in your project. You can use npm or yarn to install the required packages.
+
+```sh
+npm install @pier-wallet/mpc-lib
+```
+
+## Usage
+
+### Establishing Connection from Frontend to Pier MPC Server
+
+```ts
+import {
+  PierMpcTransport,
+  PierMpcWallet,
+  WebSocketClient,
+} from "@pier-wallet/mpc-lib";
+
+const PIER_MPC_SERVER_URL = "ws://localhost:3030/mpc"; // TODO: replace with Pier MPC server URL
+
+// Step 1: Initialize WebSocket client and connect to MPC server
+const websocket = new WebSocketClient();
+websocket.connect(PIER_MPC_SERVER_URL);
+
+// Step 2: Establish connection, create a group, and start key generation
+const transport = await PierMpcTransport.establishConnection({
+  type: "create",
+  partiesParameters: {
+    requiredPartiesToSign: 2,
+    totalParties: 2,
+  },
+});
+```
+
+### Creating a Wallet
+
+To create an MPC wallet, you can use the `PierMpcWallet.generateKeyShare` method.
+
+We will create a 2/2 MPC wallet. First, create a group and start keygen for the first party:
+
+```ts
+// Step 1: Generate key share for the wallet
+const wallet = await PierMpcWallet.generateKeyShare(transport);
+
+// Step 2: Display wallet address
+console.log("Wallet Address:", wallet.address);
+```
+
+Then join the group from the second party and start keygen as well:
+
+```ts
+import {
+  PierMpcTransport,
+  PierMpcWallet,
+  WebSocketClient,
+} from "@pier-wallet/mpc-lib";
+
+// Step 1: Retrieve group and session IDs from URL parameters
+const groupId = getGroupId();
+const sessionId = getSessionId();
+
+// Step 2: Establish connection, join the group, and start key generation
+const transport = await PierMpcTransport.establishConnection({
+  type: "join",
+  groupId,
+  sessionId,
+});
+
+// Step 3: Generate key share for the wallet
+const wallet = await PierMpcWallet.generateKeyShare(transport);
+
+// Step 4: Display wallet address
+console.log("Wallet Address:", wallet.address);
+```
+
+### Getting Wallet Address
+
+You can retrieve the Ethereum wallet address using the `getAddress` method or `address` property.
+
+```ts
+const walletAddress = await wallet.getAddress();
+const walletAddress = wallet.address;
+```
+
+### Signing a Digest
+
+To sign a digest using Pier MPC wallet, you can use the `signDigest` method. You need to run `signDigest` on at least `requiredPartiesToSign` parties for it to generate a signature.
+
+```ts
+const message = "hello world";
+const digest = ethers.utils.arrayify(ethers.utils.hashMessage(message));
+const signature = await wallet.signDigest(digest);
+
+// these two addresses will be the same
+console.log(
+  await wallet.getAddress(),
+  ethers.utils.verifyMessage(message, signature)
+);
+```
+
+### Signing a Transaction
+
+_Work in progress_

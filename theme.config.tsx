@@ -1,18 +1,39 @@
-import React from 'react'
-import { DocsThemeConfig } from 'nextra-theme-docs'
+import React from "react";
+import { DocsThemeConfig } from "nextra-theme-docs";
 
 const config: DocsThemeConfig = {
-  logo: <span>My Project</span>,
-  project: {
-    link: 'https://github.com/shuding/nextra-docs-template',
-  },
-  chat: {
-    link: 'https://discord.com',
-  },
-  docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
-  footer: {
-    text: 'Nextra Docs Template',
-  },
-}
+  logo: <span>pier</span>,
 
-export default config
+  banner: {
+    text: "Learn how to build on the decentralized web",
+  },
+
+  chat: {
+    link: "https://discord.com",
+  },
+  feedback: {
+    content: null,
+  },
+  useNextSeoProps: () => {
+    titleTemplate: "%s – SWR";
+  },
+  editLink: {
+    text: null,
+  },
+  footer: {
+    text: "where your Web3 journey starts",
+  },
+  toc: {
+    title: "Table of Contents",
+    float: true,
+  },
+  i18n: [
+    { locale: "en", text: "English" },
+    // { locale: "de", text: "Deutsch" }, // TODO: add de when needed
+  ],
+  search: {
+    placeholder: "Search...",
+  },
+};
+
+export default config;

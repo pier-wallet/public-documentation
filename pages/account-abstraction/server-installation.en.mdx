@@ -1,0 +1,79 @@
+# Setup and Usage with NestJS
+
+- You'll need to implement an endoint on your backend, that can trigger a recovery for a user.
+- You'll need to store one or multiple web3 private keys (DEFAULT GUARDIANS) in your backend
+- You'll need to sign a specific message and send this to PIER to confirm the recovery
+- You'll need to use trpc to communicate with PIER
+
+```sh
+yarn add @pier-wallet/relayer @pier-wallet/utils @trpc/client:9.27.0 ethers:^5.7.2"
+```
+
+```ts
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { AppRouter } from "@pier-wallet/relayer";
+import { trpcTransformer } from "@pier-wallet/utils";
+import { TRPCClient, createTRPCClient } from "@trpc/client";
+import { BigNumber, Wallet } from "ethers";
+import { AppConfigType } from "../../configs/appConfigType";
+
+enum PierChainId {
+  POLYGON_MAINNET = 137,
+  POLYGON_TESTNET = 80001,
+}
+@Injectable()
+export class PierService {
+  private readonly trpcClient: TRPCClient<AppRouter>;
+  private readonly authorizedWallet: Wallet;
+  private readonly chainId: PierChainId;
+
+  constructor(private readonly configService: ConfigService<AppConfigType>) {
+    const { relayerUrl, authorizedPrivateKey, chainId } =
+      this.configService.get("pier", { infer: true });
+    this.chainId = Number(chainId) as PierChainId;
+
+    this.trpcClient = createTRPCClient<AppRouter>({
+      url: relayerUrl,
+      transformer: trpcTransformer({ BigNumber }),
+    });
+    this.authorizedWallet = new Wallet(authorizedPrivateKey);
+  }
+
+  async recoverWalletWithDefaultGuardian(
+    smartWalletAddress: string,
+    newDumbWalletAddress: string
+  ) {
+    const signedMessageAuthData = await this.getSignedMessageAuthData();
+    await this.trpcClient.mutation(
+      "recoveryWithDefaultGuardian/v1/recoverWithDefaultGuardian",
+      {
+        smartWalletAddress,
+        newDumbWalletAddress,
+        signedMessageAuthData,
+      }
+    );
+  }
+
+  private async getSignedMessageAuthData() {
+    const messageParams = {
+      chainId: this.chainId,
+      signedAtTimestamp: Date.now(),
+      signerAddress: this.authorizedWallet.address,
+    };
+
+    const messageToSign = await this.trpcClient.query(
+      "auth/v1/messageToSign",
+      messageParams
+    );
+    const signature = await this.authorizedWallet.signMessage(
+      messageToSign.message
+    );
+
+    return {
+      ...messageParams,
+      signature,
+    };
+  }
+}
+```

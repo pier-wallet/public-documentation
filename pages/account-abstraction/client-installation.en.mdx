@@ -1,0 +1,313 @@
+# Pier Account Abstraction Wallet as a Service SDK
+
+The Pier Account Abstraction Wallet as a Service SDK is a library that allows you to interact with the Pier AAWaaS API.
+
+## Installation
+
+```sh
+yarn add @pier-wallet/lib
+```
+
+## Usage
+
+### Initialize the SDK
+
+For a single chain
+
+```ts
+import { SmartWallet, Environment } from "@pier-wallet/lib";
+
+const pierWalletSDK = SmartWallet(Environment.ETHEREUMMAINNET, options);
+```
+
+For multiple chains
+
+```ts
+import { SmartWallet, Environment } from '@pier-wallet/lib';
+
+const multiChainPIERWalletSDK = MultichainSmartWallet({
+  smartwallets: [SmartWallet(Environment.ETHEREUMMAINNET, options), SmartWallet(Environment.ETHEREUMGOERLI, options)]
+  secureKeyValueStore: new CapacitorSecureKeyValueStore(SecureStoragePlugin),
+});
+```
+
+**Options**
+
+```ts
+relayerConfig: "[YOUR preferred RPC URL, e.g. Alchemy, Infura, etc.]",
+keyValueStore: "[YOUR preferred key value store, e.g. CapacitorSecureKeyValueStore, etc.]",
+```
+
+**Future Options (in development)**
+
+```ts
+pierApiKey: "[YOUR pier API key - you can get it from https://dashboard.pierwallet.com/]";
+defaultGuardians: "[YOUR default guardians - you can get it from https://dashboard.pierwallet.com/]";
+```
+
+### Handle Storage of the Wallet
+
+**Secure Storage**
+
+```ts
+import * as SecureStore from "expo-secure-store";
+import { WalletType } from "@pier-wallet/lib";
+
+type SerializableWalletType = Pick<
+  WalletType,
+  "smartWalletAddress" | "smartWalletName"
+>;
+
+export interface ISecureKeyValueStore {
+  save(key: string, value: string): Promise<void>;
+  load(key: string): Promise<string | null>;
+  remove(key: string): Promise<void>;
+  keys(): Promise<string[]>;
+}
+
+export type SecureDataKeys = {
+  "pier-wallet": SerializableWalletType;
+  [key: string]: any; // Allow additional keys of any type
+};
+
+export class SecureStorage implements ISecureKeyValueStore {
+  save = async <K extends keyof SecureDataKeys>(
+    key: string,
+    data: SecureDataKeys[K]
+  ) => {
+    await SecureStore.setItemAsync(key, JSON.stringify(data));
+  };
+
+  load = async <K extends keyof SecureDataKeys>(
+    key: string
+  ): Promise<SecureDataKeys[K] | null> => {
+    const dataString = await SecureStore.getItemAsync(key);
+    if (dataString) {
+      const parsedData = JSON.parse(dataString);
+      return parsedData;
+    }
+    return null;
+  };
+
+  remove = async (key: string) => {
+    await SecureStore.deleteItemAsync(key);
+  };
+
+  keys = async () => {
+    return [];
+  };
+}
+
+export const secureStorage = new SecureStorage();
+```
+
+**Dumb Wallet Storage Manager**
+
+```ts
+import { DumbWalletManager, WalletType } from "@pier-wallet/lib";
+import { secureStorage } from "../secureStorage"; // see above
+
+type SerializableWalletType = Pick<
+  WalletType,
+  "smartWalletAddress" | "smartWalletName"
+>;
+
+const namespacedWalletName = (userId: string) => `[YOUR-ORG]-${userId}`;
+const HARDCODED_PIN = "123456"; // Remark: this will be removed in the future, can be any 6 digit string for now
+
+export class PierWalletStorage {
+  async saveWallet(
+    userId: string,
+    wallet: SerializableWalletType,
+    dumbWallet: WalletType["dumbWallet"]
+  ) {
+    await secureStorage.save(namespacedWalletName(userId), wallet);
+    await dumbWalletManager.saveDumbWallet({
+      smartWalletAddress: wallet.smartWalletAddress,
+      dumbWallet,
+      pin: HARDCODED_PIN,
+    });
+  }
+
+  async getSmartWallet(userId: string): Promise<SerializableWalletType | null> {
+    return await secureStorage.load(namespacedWalletName(userId));
+  }
+
+  async getDumbWallet(
+    smartWalletAddress: string
+  ): Promise<WalletType["dumbWallet"] | null> {
+    const dumbWallet = await dumbWalletManager.loadLatestDumbWallet({
+      smartWalletAddress,
+      pin: HARDCODED_PIN,
+    });
+
+    if (!dumbWallet) {
+      return null;
+    }
+    return dumbWallet;
+  }
+
+  async removeWallet(userId: string) {
+    await secureStorage.remove(namespacedWalletName(userId));
+  }
+}
+
+export const pierWalletStorage = new PierWalletStorage();
+
+// IMPORTANT: this.listWallets() will not work as keys() is not implemented in SecureStorage. Only needed if you want to support multiple different wallets per user
+export const dumbWalletManager = DumbWalletManager({
+  secureKeyValueStore: secureStorage as any,
+});
+```
+
+### Creating a Wallet locally, deploy on the blockchain and add default guardians (optional)
+
+```ts
+const createAndDeployWallet = async (userId: string) => {
+  const smartWalletName = `[YOUR-ORG-NAME]-${userId}`;
+
+  // 1. create wallet
+  const createdWallet = await pierWalletSDK.wallet.create({
+    smartWalletName,
+  });
+  const dumbWallet = createdWallet.dumbWallet;
+
+  const pierWallet = {
+    smartWalletName: createdWallet.smartWalletName,
+    smartWalletAddress: createdWallet.smartWalletAddress,
+  };
+
+  // 2. save wallet
+  await pierWalletStorage.saveWallet(
+    userId,
+    pierWallet,
+    createdWallet.dumbWallet
+  );
+
+  const pimpedPierWallet: WalletType = {
+    smartWalletName: pierWallet.smartWalletName,
+    smartWalletAddress: pierWallet.smartWalletAddress,
+    dumbWallet,
+  };
+
+  // 3. deploy the wallet
+  const { replaceableTransactionHash } = await pierWalletSDK.wallet.deploy({
+    wallet: pierWallet,
+  });
+
+  // 4. wait for confirmation
+  await pierWalletSDK.transactions.getTransactionConfirmation({
+    replaceableTransactionHash,
+  });
+
+  // 5. add default guardian === PIER for now
+  await pierWalletSDK.wallet._addGuardian({
+    dumbWallet,
+    guardianAddress: DEFAULT_GUARDIAN,
+    smartWalletAddress: pierWallet.smartWalletAddress,
+  });
+
+  return pierWallet;
+};
+```
+
+### Recover Wallet with (default) Guardian
+
+**Frontend**
+
+```ts
+const recoverWalletWithDefaultGuardian = async (userId: string) => {
+  const smartWalletName = `[YOUR-ORG-NAME]-${userId}`;
+
+  const smartWalletAddress = await pierWalletSDK.wallet.getSmartWalletAddress({
+    smartWalletName,
+  });
+  if (!smartWalletAddress) {
+    throw new Error("Smart wallet address not found for a deployed wallet 👀");
+  }
+  const pierWallet = {
+    smartWalletName,
+    smartWalletAddress,
+  };
+
+  const dumbWallet = pierWalletSDK.wallet.generateNewAccount();
+
+  await pierWalletStorage.saveWallet(userId, pierWallet, dumbWallet);
+
+  // TODO: Implement PierAPI in YOUR code to call YOUR backend
+  await PierApi.recoverWalletWithDefaultGuardian(
+    pierWallet.smartWalletAddress,
+    dumbWallet.address
+  );
+
+  return pierWallet;
+};
+```
+
+### Redeem a code
+
+```ts
+export const redeemCode = async (
+  smartWalletAddress: string,
+  smartWalletName: string,
+  accessCode: string
+) => {
+  const txs = await pierWalletSDK.wallet.referrals.redeemCode({
+    smartWalletAddress,
+    smartWalletName,
+    accessCode,
+  });
+
+  await Promise.all(
+    txs.map(({ transaction }) =>
+      pierWalletSDK.transactions.getTransactionConfirmation({
+        replaceableTransactionHash: transaction.replaceableTransactionHash,
+      })
+    )
+  );
+};
+```
+
+### Handle Load and Recovery
+
+This is specific to your needs, but examplary:
+
+```ts
+if (!userId) {
+  throw new Error("User not logged in");
+}
+
+const smartWalletName = `[YOUR-ORG-NAME]-${userId}`;
+const loadedSmartWallet = await pierWalletStorage.getSmartWallet(userId);
+
+if (loadedSmartWallet) {
+  const walletInfo = await await pierWalletSDK.wallet.getWalletInfoForName({
+    smartWalletName,
+  });
+  if (!walletInfo?.owner) {
+    // Option A: saved but not deployed --> wait for deployment (or deploy?)
+  }
+  const dumbWallet = await pierWalletStorage.getDumbWallet(
+    loadedSmartWallet.smartWalletAddress
+  );
+
+  // Option B: saved and deployed, but not owned --> recover
+  if (walletInfo?.owner !== dumbWallet?.address) {
+    const pierWallet = await recoverWalletWithDefaultGuardian(userId); // see above
+    return pierWallet;
+  }
+  // Option C: saved and deployed and owned --> load
+  return loadedSmartWallet;
+}
+
+// Option D: deployed but not saved --> save and recover
+const isDeployed = !(await isNameAvailable(smartWalletName));
+if (isDeployed) {
+  const pierWallet = await recoverWalletWithDefaultGuardian(userId); // see above
+  return pierWallet;
+}
+
+// Option E: not saved and not deployed --> create, save and deploy
+const pierWallet = await createAndDeployWallet(userId); // see above
+return pierWallet;
+```

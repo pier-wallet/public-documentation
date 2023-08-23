@@ -1,0 +1,13 @@
+{
+  "index": "Introduction",
+
+  "mpc": "MPC Wallet as a Service",
+  "account-abstraction": "Account Abstraction as a Service",
+
+  "contact": {
+    "title": "Contact ↗",
+    "type": "page",
+    "href": "https://twitter.com/pier_wallet",
+    "newWindow": true
+  }
+}
