@@ -1,0 +1,16 @@
+# Wallets | The Theory
+
+To interact with the blockchain, you need a wallet. It allows you to **store**, **sign** and **transact** directly on the blockchain. There are many different types of wallets, each with their own advantages and disadvantages. This document aims to provide a high level overview of the different types of wallets and their tradeoffs.
+
+There are two ways to **store** private keys:
+
+- **Hot wallets**: private key is on a storage or device that is somehow connected to the internet
+- **Cold wallets**: private key is on a storage or device, that is not connected to the internet - either on a HSM (hardware security module) or an external device like ledger
+
+There are multiple ways to **sign** messages and conduct **transactions** directly on the blockchain:
+
+- **Private key wallet**: User wallet stores a the private key that can be used to sign TX (e.g. Ledger, Metamask)
+- **MPC wallet**: private key is made up of multiple fractions (typically 3 in a retail setup). The wallet stores a single fraction, the service provider stores a single fraction and a third fraction is stored in a backup (more on this later). Transactions can be signed with 2 out of 3 signatures individually and then “assembled” together before submitting to the blockchain.
+- **Account Abstraction / Smart Contract Wallet:** Once a transaction is signed, the wallet submits the transaction to a smart contract on the blockchain. This contract acts as the holder of the assets, the wallet is only the controller. Depending on implementation, this “smart contract wallet” can pay for the gas fees in different currencies, have different security mechanisms such as spend limits, multi-signatures, recovery mechanism, etc.
+
+We at pier believe that Account Abstraction and MPC wallets are the future of crypto wallets. They provide the best security and user experience.

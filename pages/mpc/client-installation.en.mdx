@@ -1,6 +1,6 @@
-# Pier Multi-Party Computation (MPC) Wallet as a Service SDK
+# pier Multi-Party Computation (MPC) Wallet as a Service SDK
 
-The Pier Multi-Party Computation (MPC) Wallet SDK allows you to create and manage wallets that leverage multi-party computation protocols for enhanced security and privacy. This documentation provides an overview of the API and its components to help you integrate and utilize the SDK effectively.
+The pier Multi-Party Computation (MPC) Wallet SDK allows you to create and manage wallets that leverage multi-party computation protocols for enhanced security and privacy. This documentation provides an overview of the API and its components to help you integrate and utilize the SDK effectively.
 
 ## Installation
 
@@ -12,7 +12,7 @@ npm install @pier-wallet/mpc-lib
 
 ## Usage
 
-### Establishing Connection from Frontend to Pier MPC Server
+### Establishing Connection from Frontend to pier MPC Server
 
 ```ts
 import {
@@ -21,7 +21,7 @@ import {
   WebSocketClient,
 } from "@pier-wallet/mpc-lib";
 
-const PIER_MPC_SERVER_URL = "ws://localhost:3030/mpc"; // TODO: replace with Pier MPC server URL
+const PIER_MPC_SERVER_URL = "ws://localhost:3030/mpc"; // TODO: replace with pier MPC server URL
 
 // Step 1: Initialize WebSocket client and connect to MPC server
 const websocket = new WebSocketClient();
@@ -89,7 +89,7 @@ const walletAddress = wallet.address;
 
 ### Signing a Digest
 
-To sign a digest using Pier MPC wallet, you can use the `signDigest` method. You need to run `signDigest` on at least `requiredPartiesToSign` parties for it to generate a signature.
+To sign a digest using pier MPC wallet, you can use the `signDigest` method. You need to run `signDigest` on at least `requiredPartiesToSign` parties for it to generate a signature.
 
 ```ts
 const message = "hello world";

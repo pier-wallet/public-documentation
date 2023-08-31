@@ -1,5 +1,7 @@
 {
-  "overview": "Overview",
-  "client-installation": "Client SDK Setup",
-  "server-installation": "Server SDK Setup"
+  "setup": "Sign up & API key",
+  "overview": "Overview & Architecture",
+  "sdk-installation": "SDK Setup",
+  "sdk-functions": "SDK Functions",
+  "api-installation": "API Setup"
 }

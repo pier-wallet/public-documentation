@@ -1,0 +1,57 @@
+# Wallet functions
+
+```ts
+// Create wallet
+const wallet = await pierwalletSDK.wallet.create({
+  smartWalletName: WALLET_NAME,
+});
+```
+
+```ts
+// Deploy wallet to the blockchain
+const walletDeployTx = await pierwalletSDK.wallet.deploy({
+  wallet,
+  accessCode: "nobankTestCodeToGetFundedDuringCreation",
+});
+await smartwallet.transactions.getTransactionConfirmation(walletDeployTx);
+```
+
+```ts
+// Add Guardian
+const addGuardianTransaction = await smartwallet.wallet._addGuardian({
+  dumbWallet: storedWallet.dumbWallet,
+  smartWalletAddress: storedWallet.smartWalletAddress,
+  guardianAddress: guardianWallet.smartWalletAddress,
+});
+await smartwallet.transactions.getTransactionConfirmation(
+  addGuardianTransaction
+);
+```
+
+```ts
+// Check if latest version
+const { isLatestVersion } = await smartwallet.chain.wallet.getIsLatestVersion(
+  storedWallet.smartWalletAddress
+);
+```
+
+```ts
+// Other wallet functions
+pierwalletSDK.wallet.isSmartWallet();
+pierwalletSDK.wallet.generateNewAccount();
+pierwalletSDK.wallet.getAccountFromPrivateKey();
+pierwalletSDK.wallet.isNameAvailable();
+pierwalletSDK.wallet.getSmartWalletAddress();
+pierwalletSDK.wallet.getSmartWalletName();
+pierwalletSDK.wallet.getUnstoppableDomainAddress();
+pierwalletSDK.wallet.getUnstoppableDomainName();
+pierwalletSDK.wallet.getWalletInfoForName();
+pierwalletSDK.wallet.getWalletInfoForAddress();
+pierwalletSDK.wallet.getWalletFactoryInfo();
+pierwalletSDK.wallet.upgradeWalletVersion();
+pierwalletSDK.wallet.has2FA();
+pierwalletSDK.wallet.getGuardianApprovalInfo();
+pierwalletSDK.wallet.getProtegesBasedOnFriendsList();
+pierwalletSDK.wallet.runMigrationIfRecentlyRecovered();
+pierwalletSDK.wallet.referrals();
+```

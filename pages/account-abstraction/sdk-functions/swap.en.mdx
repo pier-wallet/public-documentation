@@ -1,0 +1,30 @@
+# Swap functions
+
+```ts
+const bestTrade = (await smartwallet.swap.getBestTrade({
+  smartWalletAddress: storedWallet.smartWalletAddress,
+  tradeInput: {
+    tradeType: TradeType.EXACT_INPUT,
+    tokenAmountFromBeforeWeiConversion,
+  },
+  fromTokenAddress,
+  toTokenAddress,
+}))!;
+```
+
+```ts
+const swap = await smartwallet.swap.swap({
+  dumbWallet: storedWallet.dumbWallet,
+  smartWalletAddress: storedWallet.smartWalletAddress,
+  tradeInfo: bestTrade,
+});
+```
+
+```ts
+const { transactionFee } = await swap.estimateFree();
+```
+
+```ts
+const swapTX = await swap.sendFree();
+await smartwallet.transactions.getTransactionConfirmation(swapTX);
+```

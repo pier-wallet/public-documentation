@@ -1,8 +1,8 @@
 {
   "index": "Introduction",
-
+  "background": "Background",
+  "account-abstraction": "Account Abstraction Wallet as a Service",
   "mpc": "MPC Wallet as a Service",
-  "account-abstraction": "Account Abstraction as a Service",
 
   "contact": {
     "title": "Contact ↗",

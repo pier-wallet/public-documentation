@@ -1,0 +1,16 @@
+# Transfer functions
+
+```ts
+const pendingTx = await(
+  await smartwallet.transfer.transfer({
+    dumbWallet: storedWallet.dumbWallet,
+    smartWalletAddress: storedWallet.smartWalletAddress,
+    destinationAddress,
+    amount: parseCurrencyAmount(
+      smartwallet.chain.currency.toCurrency({ tokenAddress: MATIC }),
+      tokenAmountBeforeWeiConversion
+    ),
+  })
+).sendFree();
+await smartwallet.transactions.getTransactionConfirmation(pendingTx);
+```

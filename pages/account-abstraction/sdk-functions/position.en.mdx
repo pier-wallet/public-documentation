@@ -1,0 +1,34 @@
+# Position functions
+
+```ts
+const tokenBalance =
+  await smartwallet.position.getSingleTokenBalanceWithChainCall({
+    tokenAddress: MATIC,
+    contractAddress: storedWallet.smartWalletAddress,
+  });
+```
+
+```ts
+const portfolioPositions =
+  await smartwallet.position.getAllPortfolioTokenBalances({
+    smartWalletAddress: storedWallet.smartWalletAddress,
+  });
+```
+
+```ts
+// other functions
+pierwalletSDK.position.getLatestPriceForTokenWithRelayer();
+pierwalletSDK.position.getLatestPricesForTokensWithRelayer();
+pierwalletSDK.position.getAllNFTAddressesAndIds();
+pierwalletSDK.position.getNFTMetaDataLegacy();
+pierwalletSDK.position.getAllOwnersOfNFT();
+pierwalletSDK.position.getNFTMetaData();
+pierwalletSDK.position.getNFTsMetaData();
+pierwalletSDK.position.getAllNFTPositions();
+pierwalletSDK.position.getBalancesOfAllSupportedTokensWithChainCall();
+pierwalletSDK.position.getAllHarmonyStakedDelegations();
+pierwalletSDK.position.getAllPortfolioPositions();
+pierwalletSDK.position.getTotalPortfolioValueInUSD();
+pierwalletSDK.position.hasFundingContractEnoughFunds();
+pierwalletSDK.position.getNoBankProductDetails();
+```

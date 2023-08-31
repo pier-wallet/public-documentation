@@ -1,6 +1,6 @@
-# Pier Account Abstraction Wallet as a Service SDK
+# pier Account Abstraction Wallet as a Service SDK
 
-The Pier Account Abstraction Wallet as a Service SDK is a library that allows you to interact with the Pier AAWaaS API.
+The pier Account Abstraction Wallet as a Service SDK is a library that allows you to interact with the pier AAWaaS API.
 
 ## Installation
 
@@ -18,17 +18,6 @@ For a single chain
 import { SmartWallet, Environment } from "@pier-wallet/lib";
 
 const pierWalletSDK = SmartWallet(Environment.ETHEREUMMAINNET, options);
-```
-
-For multiple chains
-
-```ts
-import { SmartWallet, Environment } from '@pier-wallet/lib';
-
-const multiChainPIERWalletSDK = MultichainSmartWallet({
-  smartwallets: [SmartWallet(Environment.ETHEREUMMAINNET, options), SmartWallet(Environment.ETHEREUMGOERLI, options)]
-  secureKeyValueStore: new CapacitorSecureKeyValueStore(SecureStoragePlugin),
-});
 ```
 
 **Options**
@@ -200,7 +189,7 @@ const createAndDeployWallet = async (userId: string) => {
     replaceableTransactionHash,
   });
 
-  // 5. add default guardian === PIER for now
+  // 5. add default guardian === pier for now
   await pierWalletSDK.wallet._addGuardian({
     dumbWallet,
     guardianAddress: DEFAULT_GUARDIAN,
