@@ -1,5 +1,3 @@
 {
-  "wallets": "Wallets Theory",
-  "account-abstraction": "Account Abstraction Wallets",
-  "mpc": "MPC Wallets"
+  "wallets": "Wallets Theory"
 }

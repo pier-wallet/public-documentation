@@ -1,8 +1,8 @@
 {
   "wallet": "Wallet",
-  "position": "Position",
   "transfer": "Transfer",
   "swap": "Swap",
   "position": "Position",
-  "product": "Product"
+  "product": "Product",
+  "keypass": "Keypass"
 }
