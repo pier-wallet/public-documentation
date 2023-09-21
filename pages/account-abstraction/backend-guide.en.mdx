@@ -1,4 +1,11 @@
-# Setup and Usage with NestJS
+# Using the pier wallet SDK in your backend
+
+Using pier wallet SDK in your backend is pretty straight forward. Main motivation to do this if you want to do one of the following:
+
+- mint custom tokens and NFTs for your users
+- recover a wallet for a user
+
+## Setup and Usage with Typescript, NestJS for default guardians
 
 - You'll need to implement an endoint on your backend, that can trigger a recovery for a user.
 - You'll need to store one or multiple web3 private keys (DEFAULT GUARDIANS) in your backend
@@ -6,7 +13,7 @@
 - You'll need to use trpc to communicate with pier
 
 ```sh
-yarn add @pier-wallet/relayer @pier-wallet/utils @trpc/client:9.27.0 ethers:^5.7.2"
+yarn add @pier-wallet/relayer @pier-wallet/utils @trpc/client:9.27.0 ethers:^5.7.2
 ```
 
 ```ts

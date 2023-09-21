@@ -1,0 +1,66 @@
+# Using the pier wallet SDK with React Native
+
+Using the pier wallet SDK requires some additional manual configurations, we created a test repository that you can fork to get started easily, here are some of the steps we performed to get it to work:
+
+```bash
+npm i react-native-webcrypto
+npm i stream-browserify
+npm i @craftzdog/react-native-buffer
+npm i core-js
+npm i react-native-url-polyfill
+npm i text-encoding
+npm i js-sha256
+```
+
+Then we can update our `babel.config.js` file to make it look like this:
+
+```ts
+module.exports = {
+  plugins: [
+    [
+      "module-resolver",
+      {
+        alias: {
+          crypto: "react-native-webcrypto",
+          stream: "stream-browserify",
+          buffer: "@craftzdog/react-native-buffer",
+        },
+      },
+    ],
+  ],
+  presets: [
+    [
+      "module:metro-react-native-babel-preset",
+      {
+        unstable_disableES6Transforms: true,
+      },
+    ],
+  ],
+};
+```
+
+And finally we can update our `metro.config.js` file to use this:
+
+```ts
+const { getDefaultConfig } = require("@expo/metro-config");
+
+module.exports = (async () => {
+  const {
+    resolver: { sourceExts },
+  } = await getDefaultConfig(__dirname);
+
+  return {
+    resolver: {
+      sourceExts: [...sourceExts, "cjs", "mjs"],
+    },
+    transformer: {
+      getTransformOptions: async () => ({
+        transform: {
+          experimentalImportSupport: false,
+          inlineRequires: true,
+        },
+      }),
+    },
+  };
+})();
+```
