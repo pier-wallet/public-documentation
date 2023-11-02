@@ -1,5 +1,6 @@
 {
   "index": "Introduction",
+  "getting-started": "Getting started",
 
   "account-abstraction": "Account Abstraction Wallet as a Service",
   "mpc": "MPC Wallet as a Service",

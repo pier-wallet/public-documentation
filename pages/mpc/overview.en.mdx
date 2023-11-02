@@ -1,54 +1,45 @@
-## Introduction
-
-There are different setups, but we will focus on a 2 out of 3 MPC wallet where for each transaction 2 signatures are required out of a total of 3
-
-**Party 1 - The user**
-
-- **main key**: stored in the user's device / secure storage
-- **backup of main key (optional)**: user can extract the main private key & seed phrase of this share
-
-**Party 2: The service provider**
-
-- **main key:** stored encrypted on a database
-- **backup / recovery method**: the service provider regularly creates a backup of the DB
-
-**Party 3: The backup**
-
-- **option A**: encrypted private key shard on passkey - encrypted with biometrics, stored on cloud (e.g. iCloud)
-- **option B**: encrypted private key shard on DB at service provider - encrypted via another key stored on passkey, encrypted with biometrics, stored on cloud (e.g. iCloud)
-- **option C:** backup service provider like CoinCover - stored at service provider in HSM
-- **option D:** private key / seed phrase extraction - stored on a piece of “paper”
-
-At pier, we **prefer option A & B**, but depending on the individual requirements we support all options.
+import Image from "next/image";
 
 ## Architecture & Concept
 
-## Theory behind MPC (Multi-Party Computation) wallets
+The setup described focuses on a two out of three Multi-Party Computation (MPC) wallet, where two signatures are required for each transaction from three parties: the user, the service provider, and a backup.
 
-Blockchain uses ECDSA signatures - with a private key and a public key.
+<Image
+  src="/images/overview.svg"
+  alt="Platfrorm Features"
+  width={600}
+  height={500}
+/>
 
-- The private key is a 32-bit integer, typically represented in hash form
-- If we apply the ECDSA algorithm (specifically **secp256k1** for Bitcoin and Ethereum) to the private key, we get a 64-bit integer, typically represented in hash form
-- The public address of a wallet can be represented as a hash (sha-256) of
-  - Full: the result of the ECDSA algorithm and prepend 0x04
-  - Compressed: First 32-bits + 0x02 / 0x03 depending on the second 32-bits
+### Key shard generation
 
-The basic “function” of a wallet at it’s core: store a **private key** that allows to sign messages and submit signed transactions on a blockchain and “know” the digital values assigned to the **public address** of the wallet.
+In the key shard generation phase, the user, service provider, and backup each play a crucial role in creating and safeguarding key components, ensuring secure and distributed access.
 
-MPC - short for multi party computing - is a method to break up the private key into shares, encrypt it, and divid it among multiple parties.
+<Image
+  src="/images/generate-keyshare.svg"
+  alt="Platfrorm Features"
+  width={600}
+  height={500}
+/>
 
-These parties will independently compute their part of the private key share they hold to produce a signature without revealing the encryption to the other parties. This means there is never a time when the private key is formed in one place; instead, it exists in a fully “liquid” form.
+### Signatures and transactions
 
-Ordinarily, when a single private key is stored in one place, a wallet’s owner would need to trust that the device or party that holds that private key is completely secure. Such a device could be an HSM or, less securely, a crypto exchange that essentially holds the customer’s private keys on their behalf.
+The process of signatures and transactions delves into how the MPC wallet operates in practice, detailing how the consent and coordination of two out of the three parties validate and authorize each transaction.
 
-However, these parties have proven themselves to be vulnerable. When an attacker only needs to succeed in hacking one point of compromise to steal a private key, it leaves the digital assets that key unlocks wide open to theft.
+<Image
+  src="/images/transactions.svg"
+  alt="Platfrorm Features"
+  width={600}
+  height={500}
+/>
 
-Multi-party computation does away with this problem, as the private key is now no longer held by any one party at any point in time. Instead, it is decentralized and held across multiple parties (i.e. devices), each blind to the other. Whenever the key is required, MPC is set in motion to confirm that all parties, or a predetermined number of parties out of the full set, approve of the request.
+### Recovery and key re-sharing
 
-With MPC technology in play, a potential hacker now has a much harder task ahead of them. To gain control over a user’s wallet, they now need to attack multiple parties across different operating platforms at different locations simultaneously.
+This section explores the strategies and mechanisms for recovery and key re-sharing, providing insights into the methods employed to regain access in case of unexpected events or key loss.
 
-The multi-party computation solution then solves the problem of secure key storage. As the key no longer resides in one single place, it also allows more personnel to access a wallet without the risk of any of them turning rogue and running off with the digital assets it contains.
-
-In addition, with the private key completely secure, users can now hold their assets online and no longer need cumbersome cold-storage devices. This means that transferring digital assets is now more fluid and no compromise is required between security and operational efficiency.
-
-In practice, they are multiple algorithms to do MPC, MPC-CMP being the widely adopted and fastest method.
+<Image
+  src="/images/recovery-today.svg"
+  alt="Platfrorm Features"
+  width={600}
+  height={500}
+/>

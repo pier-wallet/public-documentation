@@ -1,6 +1,4 @@
 {
-  "overview": "Overview",
-  "react-native-guide": "React Native Guide",
-  "client-installation": "Client SDK Setup",
-  "server-installation": "Server SDK Setup"
+  "overview": "Overview & Architecture",
+  "react-native-guide": "React Native Guide"
 }
