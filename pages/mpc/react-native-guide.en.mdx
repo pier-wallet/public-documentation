@@ -23,15 +23,7 @@ npm run ios
 Add dependencies for the MPC library
 
 ```sh
-npm i @pier-wallet/mpc-lib @trpc/client @trpc/server superjson
-```
-
-[TODO: remove client, server and superjson once integrated to mpc-lib]
-
-Add other dependencies for authentication
-
-```sh
-npm i @supabase/supabase-js
+npm i @pier-wallet/mpc-lib
 ```
 
 Add dependencies to make node stuff work on react native (polyfills)
@@ -74,64 +66,57 @@ import "react-native-url-polyfill/auto";
 
 ## Generate a key share (2 out of 2)
 
-### Add pier MPC SDK
+### Create a simple provider for pier
 
-Set up TRPC, & stuff, authenticate using supabase and default username / password 🔓 (you'll need to implement your application specific authentication separately)
+```tsx
+import { PierMpcVaultSdk } from "@pier-wallet/mpc-lib";
+import { usePierMpcSdk } from "@pier-wallet/mpc-lib/dist/package/react-native";
+import React, { useMemo } from "react";
 
-[TODO: Remove the below]
+const PierServerVault = React.createContext<PierMpcVaultSdk>(null as any);
 
-```ts
-// api.ts
-export const supabase = createClient(
-  "https://wnpphaccyjobbojjkvat.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InducHBoYWNjeWpvYmJvamprdmF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTIxMDU0MzAsImV4cCI6MjAwNzY4MTQzMH0.zZStzJDj_OGENGRX1a7bx-hjYt6ENdDZJbXlpHSwTDI"
-);
-supabase.auth.signInWithPassword({
-  email: "mpc-lib-test@example.com",
-  password: "123456",
-});
+export function usePierServerVault() {
+  return React.useContext(PierServerVault);
+}
 
-const PIER_MPC_SERVER_HTTP_URL = "https://mpc.pierwallet.com";
-export const api: any = createTRPCProxyClient({
-  transformer: new SuperJSON(),
-  links: [
-    httpBatchLink({
-      url: `${PIER_MPC_SERVER_HTTP_URL}/trpc`,
-      async headers() {
-        const session = await supabase.auth.getSession();
+export function PierServerVaultProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pierMpcSdk = usePierMpcSdk();
+  const vault = useMemo(() => {
+    return new PierMpcVaultSdk(pierMpcSdk);
+  }, [pierMpcSdk]);
 
-        if (session.error) {
-          throw new Error(session.error.message);
-        }
-        if (!session.data.session) {
-          throw new Error("failed to login");
-        }
-
-        return {
-          authorization: `Bearer ${session.data.session.access_token}`,
-        };
-      },
-    }),
-  ],
-});
+  return (
+    <PierServerVault.Provider value={vault}>
+      {children}
+    </PierServerVault.Provider>
+  );
+}
 ```
 
-Wrap your app in PierMpcSdkReactNativeProvider
+### Add pier MPC SDK
+
+Wrap your app in pier
 
 ```ts
 // App.tsx
 import "react-native-url-polyfill/auto";
 
 import { PierMpcSdkReactNativeProvider } from "@pier-wallet/mpc-lib/dist/package/react-native";
+import React from "react";
 import Mpc from "./Mpc";
-import { supabase } from "./api";
+import { PierServerVaultProvider } from "./pier-mpc-provider";
 
 export default function App() {
   return (
-    <PierMpcSdkReactNativeProvider supabase={supabase}>
-      // Mpc is a simple page that we will create below
-      <Mpc />
-    </PierMpcSdkReactNativeProvider>
+    <PierMpcSdkReactNativeProvider>
+      <PierServerVaultProvider>
+        // Mpc is a simple page that we will create later
+        <Mpc />
+      </PierServerVaultProvider>
   );
 }
 ```
@@ -140,32 +125,69 @@ Create a simple MPC wallet page
 
 ```tsx
 // Mpc.tsx
-import { SessionKind } from "@pier-wallet/mpc-lib";
+import { KeyShare, SessionKind } from "@pier-wallet/mpc-lib";
+import { Button, View, Text } from "react-native";
+import { useEffect, useState } from "react";
+import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/dist/package/ethers-v5";
+import { ethers } from "ethers";
+import _ from "lodash";
+import { usePierServerVault } from "./pier-mpc-provider";
 import { usePierMpcSdk } from "@pier-wallet/mpc-lib/dist/package/react-native";
-import { View } from "react-native";
-import { api } from "./api";
+
+// REMARK: Use should use your own ethers provider - this is just for demo purposes
+const ethereumProvider = new ethers.providers.JsonRpcProvider(
+  "https://rpc.sepolia.org"
+);
 
 export default function Mpc() {
   const pierMpcSdk = usePierMpcSdk();
+  const pierMpcVaultSdk = usePierServerVault();
 
-  const establishConnection = async <T extends SessionKind>(sessionKind: T) => {
-    // create an MPC session with the server - one of the participants & keyshare holders
-    const { sessionId } = await api.createSession.mutate({
-      sessionKind,
-    });
+  const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-    // join the secure MPC session with the specific session ID
-    const connection = await pierMpcSdk.establishConnection(sessionKind, {
-      type: "join",
-      sessionId,
-    });
+  const generateKeyShare = async () => {
+    // we'll add this later
+  };
 
-    return connection;
+  const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
+    null
+  );
+  useEffect(() => {
+    // we'll add this later
+  }, [keyShare]);
+
+  const sendEthereumTransaction = async () => {
+    // we'll add this later
   };
 
   return (
     <>
-      <View></View>
+      <View style={{ flex: 1, padding: 20 }}>
+        <Button
+          title="Sign in as Test (fix)!"
+          onPress={async () => {
+            await pierMpcSdk.auth.signInWithPassword({
+              email: "mpc-lib-test@example.com",
+              password: "123456",
+            });
+
+            console.log("signed in as test user");
+          }}
+        />
+        <Button
+          title="Generate Key Share yay"
+          onPress={generateKeyShare}
+          disabled={isLoading}
+        />
+        <Text selectable>Address: {ethWallet?.address}</Text>
+        <Text>PublicKey: {keyShare?.publicKey.join(",")}</Text>
+        <Button
+          title="Send Ethereum yay"
+          onPress={sendEthereumTransaction}
+          disabled={isLoading}
+        />
+      </View>
     </>
   );
 }
@@ -183,26 +205,14 @@ export default function Mpc() {
   const [isLoading, setIsLoading] = useState(false);
   // ...
   const generateKeyShare = async () => {
-    console.log("generateKeyShare");
-    setIsLoading(true);
     try {
-      // create a new MPC session with the server - one of the participants & keyshare holders
-      const connection = await establishConnection(SessionKind.KEYGEN);
-      console.log("we have a connection");
-      // request server to generate the first key share in a 2/2 setup (default)
-      api.generateKeyShare.mutate({
-        sessionId: connection.sessionId,
-      });
-      console.log("we have a key share on the server");
+      console.log("generating local key share...");
+      const tempKeyShare = await pierMpcVaultSdk.generateKeyShare();
 
-      // generate locally the second key share in a 2/2 setup (default)
-      const generatedKeyShare = await pierMpcSdk.generateKeyShare(connection);
-      console.log("we have a key share locally");
-      setKeyShare(generatedKeyShare);
+      console.log("local key share generated.", tempKeyShare.publicKey);
+      setKeyShare(tempKeyShare);
     } catch (e) {
       console.error(e);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -246,12 +256,13 @@ export default function Mpc() {
   useEffect(() => {
     if (!keyShare) return;
     (async () => {
-      const signConnection = await establishConnection(SessionKind.SIGN);
-
+      const signConnection = await pierMpcVaultSdk.establishConnection(
+        SessionKind.SIGN
+      );
       const ethWallet = new PierMpcEthereumWallet(
         keyShare,
         signConnection,
-        pierMpcSdk,
+        pierMpcVaultSdk,
         ethereumProvider
       );
       setEthWallet(ethWallet);
@@ -278,16 +289,9 @@ export default function Mpc() {
 
 **Important: you need to fund the address that is shown on the screen on the ethereum sepolia blockchain. You can use https://sepoliafaucet.com/ to do this**
 
-All good thigs start with lodash
-
-```sh
-npm i lodash @types/lodash
-```
-
 ```tsx
 // Mpc.tsx
 // ...
-import _ from "lodash";
 
 export default function Mpc() {
   //  ...
@@ -305,15 +309,6 @@ export default function Mpc() {
       const txRequest = await ethWallet.populateTransaction({
         to: receiver,
         value: amountToSend,
-      });
-
-      // request the server keyshare holder to sign the transaction
-      api.ethereum.signTransaction.mutate({
-        sessionId: ethWallet.connection.sessionId,
-        publicKey: ethWallet.keyShare.publicKey,
-        transaction: _.mapValues(txRequest, (v) =>
-          ethers.BigNumber.isBigNumber(v) ? v.toString() : v
-        ),
       });
       // sign the transaction locally & send it to the network once we have the full signature
       const tx = await ethWallet.sendTransaction(txRequest);
