@@ -1,9 +1,9 @@
 # Tutorial for a wallet using MPC
 
-The goal of this tutorial is to create a simple app that demonstrate how to use the pier MPC library:
+The goal of this tutorial is to create a simple web app that demonstrate how to use the pier MPC library:
 
-- ⛏️ using a simple create expo app
-- 🚧 using fix username and password for authentication
+- ⛏️ using a simple create web app using vite
+- 🚧 using fixed username and password for authentication
 - 📝 user can sign transactions
 - ⛓️ user can interact with ETH and BTC
 
@@ -25,18 +25,32 @@ Add dependencies for the MPC library
 npm i @pier-wallet/mpc-lib
 ```
 
-### Create a simple MPC wallet page
+Exclude pier wasm from the vite dev server:
+
+```js
+// vite.config.ts
+export default defineConfig({
+  // ...
+  optimizeDeps: {
+    exclude: ["@pier-wallet/mpc-ecdsa-wasm"],
+  },
+});
+```
+
+## Generate a key share
+
+Create a simple page with a button to sign in (MPC is guarded with an authentication wall) and a button to generate a key share:
 
 ```tsx
 // App.tsx
 import { KeyShare, SessionKind, PierMpcVaultSdk } from "@pier-wallet/mpc-lib";
 import { createPierMpcSdkWasm } from "@pier-wallet/mpc-lib/wasm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const pierMpc = new PierMpcVaultSdk(createPierMpcSdkWasm());
 export default function Mpc() {
-  const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
 
   const generateKeyShare = async () => {
     // we'll add this later
@@ -45,11 +59,17 @@ export default function Mpc() {
   return (
     <div>
       <button
+        disabled={isLoading}
         onClick={async () => {
-          await pierMpc.auth.signInWithPassword({
-            email: "mpc-lib-test@example.com",
-            password: "123456",
-          });
+          setIsLoading(true);
+          try {
+            await pierMpc.auth.signInWithPassword({
+              email: "mpc-lib-test@example.com",
+              password: "123456",
+            });
+          } finally {
+            setIsLoading(false);
+          }
 
           console.log("signed in as test user");
         }}
@@ -57,7 +77,7 @@ export default function Mpc() {
         Sign in as Test User
       </button>
       <button onClick={generateKeyShare} disabled={isLoading}>
-        Generate Key Share yay
+        Generate Key Share
       </button>
       <div>PublicKey: {keyShare?.publicKey.join(",")}</div>
     </div>
@@ -65,9 +85,7 @@ export default function Mpc() {
 }
 ```
 
-### Generate the keyshare
-
-This involves complex math and will take around 4 seconds.
+Now, let's add the key share generation logic. This involves complex math and will take around 4 seconds.
 
 ```tsx
 // App.tsx
@@ -75,8 +93,8 @@ This involves complex math and will take around 4 seconds.
 export default function Mpc() {
   // ...
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
-  // ...
   const generateKeyShare = async () => {
+    setIsLoading(true);
     try {
       console.log("generating local key share...");
       const localKeyShare = await pierMpc.generateKeyShare();
@@ -85,16 +103,17 @@ export default function Mpc() {
       setKeyShare(localKeyShare);
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div>
-      <button onClick={generateKeyShare} disabled={isLoading}>
-        Generate Key Share yay
-      </button>
-      <div>PublicKey: {keyShare?.publicKey.join(",")}</div>
-    </div>
+    // ...
+    <button onClick={generateKeyShare} disabled={isLoading}>
+      Generate Key Share
+    </button>
+    // ...
   );
 }
 ```
@@ -143,7 +162,7 @@ export default function Mpc() {
 
   return (
     // ...
-    <div>Address: {ethWallet?.address}</div>
+    <div>ETH Address: {ethWallet?.address}</div>
     // ...
   );
 }
@@ -155,7 +174,7 @@ export default function Mpc() {
 
 **Important: you might expect failing transactions if you don't pick a stable RPC provider like alchemy**
 
-**Important: This transaction will take around 4 seconds.**
+**Important: This transaction signing will take around 4 seconds.**
 
 ```tsx
 // App.tsx
@@ -188,7 +207,7 @@ export default function Mpc() {
   return (
     // ...
     <button onClick={sendEthereumTransaction} disabled={isLoading}>
-      Send Ethereum yay
+      Send Ethereum
     </button>
     // ...
   );
@@ -238,7 +257,7 @@ export default function Mpc() {
 
 **Important: you need to fund the address that is shown on the screen on the bitcoin test blockchain. You can use https://bitcoinfaucet.uo1.net/send.php to do this**
 
-This involves complex math and will take around 4 seconds.
+Transaction signing involves complex math and will take around 4 seconds.
 
 ```tsx
 // App.tsx
@@ -251,9 +270,7 @@ export default function Mpc() {
 
     setIsLoading(true);
     try {
-      // send 1/10 of the balance to a zero address
       const receiver = "tb1qw2c3lxufxqe2x9s4rdzh65tpf4d7fssjgh8nv6"; // testnet faucet
-      const balance = await btcWallet.getBalance();
       const amountToSend = 800n; // 0.00000800 BTC = 800 satoshi
       const feePerByte = 1n; // use a fee provider to get a more accurate fee estimate - otherwise check minimum fee manually
 
@@ -277,7 +294,7 @@ export default function Mpc() {
   return (
     // ...
     <button onClick={sendBitcoinTransaction} disabled={isLoading}>
-      Send Bitcoin yay
+      Send Bitcoin
     </button>
     // ...
   );

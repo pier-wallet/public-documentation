@@ -142,14 +142,14 @@ export default function Mpc() {
           }}
         />
         <Button
-          title="Generate Key Share yay"
+          title="Generate Key Share"
           onPress={generateKeyShare}
           disabled={isLoading}
         />
-        <Text selectable>Address: {ethWallet?.address}</Text>
+        <Text selectable>ETH Address: {ethWallet?.address}</Text>
         <Text>PublicKey: {keyShare?.publicKey.join(",")}</Text>
         <Button
-          title="Send Ethereum yay"
+          title="Send Ethereum"
           onPress={sendEthereumTransaction}
           disabled={isLoading}
         />
@@ -188,7 +188,7 @@ export default function Mpc() {
     <>
       <View style={{ flex: 1, paddingTop: 100 }}>
         <Button
-          title="Generate Key Share yay"
+          title="Generate Key Share"
           onPress={generateKeyShare}
           disabled={isLoading}
         />
@@ -241,7 +241,7 @@ export default function Mpc() {
 
   return (
     // ...
-    <Text>Text selectable>Address: {ethWallet?.address}</Text>
+    <Text>Text selectable>ETH Address: {ethWallet?.address}</Text>
     // ...
   );
 }
@@ -287,7 +287,7 @@ export default function Mpc() {
   return (
     // ...
     <Button
-      title="Send Ethereum yay"
+      title="Send Ethereum"
       onPress={sendEthereumTransaction}
       disabled={isLoading}
     />
@@ -352,9 +352,7 @@ export default function Mpc() {
 
     setIsLoading(true);
     try {
-      // send 1/10 of the balance to a zero address
       const receiver = "tb1qw2c3lxufxqe2x9s4rdzh65tpf4d7fssjgh8nv6"; // testnet faucet
-      const balance = await btcWallet.getBalance();
       const amountToSend = 800n; // 0.00000800 BTC = 800 satoshi
       const feePerByte = 1n; // use a fee provider to get a more accurate fee estimate - otherwise check minimum fee manually
 
@@ -378,7 +376,7 @@ export default function Mpc() {
   return (
     // ...
     <Button
-      title="Send Bitcoin yay"
+      title="Send Bitcoin"
       onPress={sendBitcoinTransaction}
       disabled={isLoading}
     />
