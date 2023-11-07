@@ -2,7 +2,14 @@ import Image from "next/image";
 
 ## Architecture & Concept
 
-The setup described focuses on a two out of three Multi-Party Computation (MPC) wallet, where two signatures are required for each transaction from three parties: the user, the service provider, and a backup.
+The setup described focuses on a **two out of two** Multi-Party Computation (MPC) wallet, where two signatures are required for each transaction from two parties: the user & the service provider (pier).
+
+- The user holds a key share & should create a backup using iCloud or similar
+- pier holds a keyShare & creates a backup
+- The user and pier can sign transactions independently, but both key shares are required to sign a transaction
+- The user can recover their wallet with their backup keyshare
+- **Important: If the user loses their keyshare - they cannot recover. This makes the wallet self-custodial.**
+- All transactions and user events (like recovery) are displayed in the pier SaaS dashboard
 
 <Image
   src="/images/overview.svg"
@@ -11,9 +18,9 @@ The setup described focuses on a two out of three Multi-Party Computation (MPC) 
   height={500}
 />
 
-### Key shard generation
+### Key share generation
 
-In the key shard generation phase, the user, service provider, and backup each play a crucial role in creating and safeguarding key components, ensuring secure and distributed access.
+In the key share generation phase, the user, service provider, and backup each play a crucial role in creating and safeguarding key components, ensuring secure and distributed access.
 
 <Image
   src="/images/generate-keyshare.svg"
@@ -35,7 +42,7 @@ The process of signatures and transactions delves into how the MPC wallet operat
 
 ### Recovery and key re-sharing
 
-This section explores the strategies and mechanisms for recovery and key re-sharing, providing insights into the methods employed to regain access in case of unexpected events or key loss.
+In a 2 out of 2 setup, there is no re-sharing, only recovery.
 
 <Image
   src="/images/recovery-today.svg"
