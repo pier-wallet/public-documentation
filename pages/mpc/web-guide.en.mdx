@@ -10,12 +10,11 @@ The goal of this tutorial is to create a simple app that demonstrate how to use 
 ## Initialize a new app
 
 ```sh
-npx create-expo-app -t expo-template-blank-typescript MyMPCApp
+npm create vite@latest MyMPCApp -- --template react-ts
 
 cd MyMPCApp
-
-npm run ios
-# npm run android
+npm install
+npm run dev
 ```
 
 ### Add dependencies
@@ -26,89 +25,16 @@ Add dependencies for the MPC library
 npm i @pier-wallet/mpc-lib
 ```
 
-Add dependencies to make node stuff work on react native (polyfills)
-
-```sh
-npm i @craftzdog/react-native-buffer stream-browserify react-native-quick-crypto react-native-quick-base64 react-native-url-polyfill
-```
-
-### Update configs
-
-```js
-// babel.config.js
-module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: ["babel-preset-expo"],
-    plugins: [
-      [
-        "module-resolver",
-        {
-          root: ["./"],
-          alias: {
-            crypto: "react-native-quick-crypto",
-            stream: "stream-browserify",
-            buffer: "@craftzdog/react-native-buffer",
-          },
-        },
-      ],
-    ],
-  };
-};
-```
-
-### Apply polyfills
-
-```tsx
-// App.tsx
-import "react-native-url-polyfill/auto";
-```
-
-## Generate a key share (2 out of 2)
-
-### Add pier MPC SDK
-
-Wrap your app in pier MPC provider.
-_Important_: make sure you import PierMpcProvider before you import any Component that uses it (e.g. Mpc.tsx). This is needed because PierMpcProvider includes some polyfills.
-
-```tsx
-// App.tsx
-import "react-native-url-polyfill/auto";
-
-import { PierMpcProvider } from "@pier-wallet/mpc-lib/dist/package/react-native";
-
-import React from "react";
-import Mpc from "./Mpc";
-
-export default function App() {
-  return (
-    <PierMpcProvider>
-      {/* Mpc is a simple page that we will create later */}
-      <Mpc />
-    </PierMpcProvider>
-  );
-}
-```
-
 ### Create a simple MPC wallet page
 
 ```tsx
-// Mpc.tsx
-import { KeyShare, SessionKind } from "@pier-wallet/mpc-lib";
-import { Button, View, Text } from "react-native";
-import { useEffect, useState } from "react";
-import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/dist/package/ethers-v5";
-import { ethers } from "ethers";
-import { usePierServerVault } from "./pier-mpc-provider";
+// App.tsx
+import { KeyShare, SessionKind, PierMpcVaultSdk } from "@pier-wallet/mpc-lib";
+import { createPierMpcSdkWasm } from "@pier-wallet/mpc-lib/wasm";
+import { useState } from "react";
 
-// REMARK: Use should use your own ethers provider - this is just for demo purposes
-const ethereumProvider = new ethers.providers.JsonRpcProvider(
-  "https://ethereum-sepolia.publicnode.com",
-);
-
+const pierMpc = new PierMpcVaultSdk(createPierMpcSdkWasm());
 export default function Mpc() {
-  const pierMpcVaultSdk = usePierServerVault();
-
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -116,45 +42,25 @@ export default function Mpc() {
     // we'll add this later
   };
 
-  const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
-    null,
-  );
-  useEffect(() => {
-    // we'll add this later
-  }, [keyShare]);
-
-  const sendEthereumTransaction = async () => {
-    // we'll add this later
-  };
-
   return (
-    <>
-      <View style={{ flex: 1, paddingTop: 100 }}>
-        <Button
-          title="Sign in as Test (fix)!"
-          onPress={async () => {
-            await pierMpc.auth.signInWithPassword({
-              email: "mpc-lib-test@example.com",
-              password: "123456",
-            });
+    <div>
+      <button
+        onClick={async () => {
+          await pierMpc.auth.signInWithPassword({
+            email: "mpc-lib-test@example.com",
+            password: "123456",
+          });
 
-            console.log("signed in as test user");
-          }}
-        />
-        <Button
-          title="Generate Key Share yay"
-          onPress={generateKeyShare}
-          disabled={isLoading}
-        />
-        <Text selectable>Address: {ethWallet?.address}</Text>
-        <Text>PublicKey: {keyShare?.publicKey.join(",")}</Text>
-        <Button
-          title="Send Ethereum yay"
-          onPress={sendEthereumTransaction}
-          disabled={isLoading}
-        />
-      </View>
-    </>
+          console.log("signed in as test user");
+        }}
+      >
+        Sign in as Test User
+      </button>
+      <button onClick={generateKeyShare} disabled={isLoading}>
+        Generate Key Share yay
+      </button>
+      <div>PublicKey: {keyShare?.publicKey.join(",")}</div>
+    </div>
   );
 }
 ```
@@ -164,37 +70,31 @@ export default function Mpc() {
 This involves complex math and will take around 4 seconds.
 
 ```tsx
-// Mpc.tsx
-import { KeyShare, SessionKind } from "@pier-wallet/mpc-lib";
-// ...
+// App.tsx
+
 export default function Mpc() {
   // ...
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   // ...
   const generateKeyShare = async () => {
     try {
       console.log("generating local key share...");
-      const tempKeyShare = await pierMpc.generateKeyShare();
+      const localKeyShare = await pierMpc.generateKeyShare();
 
-      console.log("local key share generated.", tempKeyShare.publicKey);
-      setKeyShare(tempKeyShare);
+      console.log("local key share generated.", localKeyShare.publicKey);
+      setKeyShare(localKeyShare);
     } catch (e) {
       console.error(e);
     }
   };
 
   return (
-    <>
-      <View style={{ flex: 1, paddingTop: 100 }}>
-        <Button
-          title="Generate Key Share yay"
-          onPress={generateKeyShare}
-          disabled={isLoading}
-        />
-        <Text>PublicKey: {keyShare?.publicKey.join(",")}</Text>
-      </View>
-    </>
+    <div>
+      <button onClick={generateKeyShare} disabled={isLoading}>
+        Generate Key Share yay
+      </button>
+      <div>PublicKey: {keyShare?.publicKey.join(",")}</div>
+    </div>
   );
 }
 ```
@@ -210,30 +110,32 @@ npm i ethers@^5.7.2
 ### Create a wallet
 
 ```tsx
-// Mpc.tsx
+// App.tsx
+import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/ethers-v5";
 import { ethers } from "ethers";
+
 // REMARK: Use should use your own ethers provider - this is just for demo purposes
 const ethereumProvider = new ethers.providers.JsonRpcProvider(
-  "https://rpc.sepolia.org"
+  "https://ethereum-sepolia.publicnode.com",
 );
 
 export default function Mpc() {
   // ...
 
   const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
-    null
+    null,
   );
   useEffect(() => {
     if (!keyShare) return;
     (async () => {
       const signConnection = await pierMpc.establishConnection(
-        SessionKind.SIGN
+        SessionKind.SIGN,
       );
       const ethWallet = new PierMpcEthereumWallet(
         keyShare,
         signConnection,
         pierMpc,
-        ethereumProvider
+        ethereumProvider,
       );
       setEthWallet(ethWallet);
     })();
@@ -241,7 +143,7 @@ export default function Mpc() {
 
   return (
     // ...
-    <Text>Text selectable>Address: {ethWallet?.address}</Text>
+    <div>Address: {ethWallet?.address}</div>
     // ...
   );
 }
@@ -256,8 +158,7 @@ export default function Mpc() {
 **Important: This transaction will take around 4 seconds.**
 
 ```tsx
-// Mpc.tsx
-// ...
+// App.tsx
 
 export default function Mpc() {
   //  ...
@@ -286,11 +187,9 @@ export default function Mpc() {
 
   return (
     // ...
-    <Button
-      title="Send Ethereum yay"
-      onPress={sendEthereumTransaction}
-      disabled={isLoading}
-    />
+    <button onClick={sendEthereumTransaction} disabled={isLoading}>
+      Send Ethereum yay
+    </button>
     // ...
   );
 }
@@ -301,11 +200,11 @@ export default function Mpc() {
 ### Create a Bitcoin wallet
 
 ```tsx
-// Mpc.tsx
+// App.tsx
 import {
   PierMpcBitcoinWallet,
   PierMpcBitcoinWalletNetwork,
-} from "@pier-wallet/mpc-lib/dist/package/bitcoin";
+} from "@pier-wallet/mpc-lib/bitcoin";
 // ...
 
 export default function Mpc() {
@@ -329,7 +228,7 @@ export default function Mpc() {
 
   return (
     // ...
-    <Text selectable>BTC Address: {btcWallet?.address}</Text>
+    <div>BTC Address: {btcWallet?.address}</div>
     // ...
   );
 }
@@ -342,7 +241,7 @@ export default function Mpc() {
 This involves complex math and will take around 4 seconds.
 
 ```tsx
-// Mpc.tsx
+// App.tsx
 
 export default function Mpc() {
   // ...
@@ -377,11 +276,9 @@ export default function Mpc() {
 
   return (
     // ...
-    <Button
-      title="Send Bitcoin yay"
-      onPress={sendBitcoinTransaction}
-      disabled={isLoading}
-    />
+    <button onClick={sendBitcoinTransaction} disabled={isLoading}>
+      Send Bitcoin yay
+    </button>
     // ...
   );
 }
