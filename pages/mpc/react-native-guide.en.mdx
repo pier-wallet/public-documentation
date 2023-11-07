@@ -101,15 +101,13 @@ import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/dist/package/ethers-
 import { ethers } from "ethers";
 import _ from "lodash";
 import { usePierServerVault } from "./pier-mpc-provider";
-import { usePierMpcSdk } from "@pier-wallet/mpc-lib/dist/package/react-native";
 
 // REMARK: Use should use your own ethers provider - this is just for demo purposes
 const ethereumProvider = new ethers.providers.JsonRpcProvider(
-  "https://rpc.notadegen.com/eth/sepolia"
+  "https://rpc.notadegen.com/eth/sepolia",
 );
 
 export default function Mpc() {
-  const pierMpcSdk = usePierMpcSdk();
   const pierMpcVaultSdk = usePierServerVault();
 
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
@@ -120,7 +118,7 @@ export default function Mpc() {
   };
 
   const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
-    null
+    null,
   );
   useEffect(() => {
     // we'll add this later
@@ -318,13 +316,13 @@ export default function Mpc() {
     if (!keyShare) return;
     (async () => {
       const signConnection = await pierMpc.establishConnection(
-        SessionKind.SIGN
+        SessionKind.SIGN,
       );
       const btcWallet = new PierMpcBitcoinWallet(
         keyShare,
         PierMpcBitcoinWalletNetwork.Testnet,
         signConnection,
-        pierMpc
+        pierMpc,
       );
       setBtcWallet(btcWallet);
     })();
