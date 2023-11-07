@@ -1,0 +1,285 @@
+# Tutorial for a wallet using MPC
+
+The goal of this tutorial is to create a simple app that demonstrate how to use the pier MPC library:
+
+- ⛏️ using a simple create expo app
+- 🚧 using fix username and password for authentication
+- 📝 user can sign transactions
+- ⛓️ user can interact with ETH and BTC
+
+## Initialize a new app
+
+```sh
+npm create vite@latest MyMPCApp -- --template react-ts
+
+cd MyMPCApp
+npm install
+npm run dev
+```
+
+### Add dependencies
+
+Add dependencies for the MPC library
+
+```sh
+npm i @pier-wallet/mpc-lib
+```
+
+### Create a simple MPC wallet page
+
+```tsx
+// App.tsx
+import { KeyShare, SessionKind, PierMpcVaultSdk } from "@pier-wallet/mpc-lib";
+import { createPierMpcSdkWasm } from "@pier-wallet/mpc-lib/wasm";
+import { useState } from "react";
+
+const pierMpc = new PierMpcVaultSdk(createPierMpcSdkWasm());
+export default function Mpc() {
+  const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const generateKeyShare = async () => {
+    // we'll add this later
+  };
+
+  return (
+    <div>
+      <button
+        onClick={async () => {
+          await pierMpc.auth.signInWithPassword({
+            email: "mpc-lib-test@example.com",
+            password: "123456",
+          });
+
+          console.log("signed in as test user");
+        }}
+      >
+        Sign in as Test User
+      </button>
+      <button onClick={generateKeyShare} disabled={isLoading}>
+        Generate Key Share yay
+      </button>
+      <div>PublicKey: {keyShare?.publicKey.join(",")}</div>
+    </div>
+  );
+}
+```
+
+### Generate the keyshare
+
+This involves complex math and will take around 4 seconds.
+
+```tsx
+// App.tsx
+
+export default function Mpc() {
+  // ...
+  const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
+  // ...
+  const generateKeyShare = async () => {
+    try {
+      console.log("generating local key share...");
+      const localKeyShare = await pierMpc.generateKeyShare();
+
+      console.log("local key share generated.", localKeyShare.publicKey);
+      setKeyShare(localKeyShare);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={generateKeyShare} disabled={isLoading}>
+        Generate Key Share yay
+      </button>
+      <div>PublicKey: {keyShare?.publicKey.join(",")}</div>
+    </div>
+  );
+}
+```
+
+## Ethereum wallet
+
+Install ethers to work with Ethereum - ethereum wallet is based on ethers v5 and implements `ethers.Signer` API.
+
+```sh
+npm i ethers@^5.7.2
+```
+
+### Create a wallet
+
+```tsx
+// App.tsx
+import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/ethers-v5";
+import { ethers } from "ethers";
+
+// REMARK: Use should use your own ethers provider - this is just for demo purposes
+const ethereumProvider = new ethers.providers.JsonRpcProvider(
+  "https://ethereum-sepolia.publicnode.com",
+);
+
+export default function Mpc() {
+  // ...
+
+  const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
+    null,
+  );
+  useEffect(() => {
+    if (!keyShare) return;
+    (async () => {
+      const signConnection = await pierMpc.establishConnection(
+        SessionKind.SIGN,
+      );
+      const ethWallet = new PierMpcEthereumWallet(
+        keyShare,
+        signConnection,
+        pierMpc,
+        ethereumProvider,
+      );
+      setEthWallet(ethWallet);
+    })();
+  }, [keyShare]);
+
+  return (
+    // ...
+    <div>Address: {ethWallet?.address}</div>
+    // ...
+  );
+}
+```
+
+### Send Ethereum Transaction
+
+**Important: you need to fund the address that is shown on the screen on the ethereum sepolia blockchain. You can use https://sepoliafaucet.com/ to do this**
+
+**Important: you might expect failing transactions if you don't pick a stable RPC provider like alchemy**
+
+**Important: This transaction will take around 4 seconds.**
+
+```tsx
+// App.tsx
+
+export default function Mpc() {
+  //  ...
+  const sendEthereumTransaction = async () => {
+    if (!ethWallet) return;
+
+    setIsLoading(true);
+    try {
+      // send 1/10 of the balance to a zero address
+      const receiver = ethers.constants.AddressZero;
+      const balance = await ethWallet.getBalance();
+      const amountToSend = balance.div(10);
+
+      // sign the transaction locally & send it to the network once we have the full signature
+      const tx = await ethWallet.sendTransaction({
+        to: receiver,
+        value: amountToSend,
+      });
+      console.log("tx", tx.hash);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    // ...
+    <button onClick={sendEthereumTransaction} disabled={isLoading}>
+      Send Ethereum yay
+    </button>
+    // ...
+  );
+}
+```
+
+## Bitcoin wallet
+
+### Create a Bitcoin wallet
+
+```tsx
+// App.tsx
+import {
+  PierMpcBitcoinWallet,
+  PierMpcBitcoinWalletNetwork,
+} from "@pier-wallet/mpc-lib/bitcoin";
+// ...
+
+export default function Mpc() {
+  // ...
+  const [btcWallet, setBtcWallet] = useState<PierMpcBitcoinWallet | null>(null);
+  useEffect(() => {
+    if (!keyShare) return;
+    (async () => {
+      const signConnection = await pierMpc.establishConnection(
+        SessionKind.SIGN,
+      );
+      const btcWallet = new PierMpcBitcoinWallet(
+        keyShare,
+        PierMpcBitcoinWalletNetwork.Testnet,
+        signConnection,
+        pierMpc,
+      );
+      setBtcWallet(btcWallet);
+    })();
+  }, [keyShare]);
+
+  return (
+    // ...
+    <div>BTC Address: {btcWallet?.address}</div>
+    // ...
+  );
+}
+```
+
+### Send Bitcoin Transaction
+
+**Important: you need to fund the address that is shown on the screen on the bitcoin test blockchain. You can use https://bitcoinfaucet.uo1.net/send.php to do this**
+
+This involves complex math and will take around 4 seconds.
+
+```tsx
+// App.tsx
+
+export default function Mpc() {
+  // ...
+
+  const sendBitcoinTransaction = async () => {
+    if (!btcWallet) return;
+
+    setIsLoading(true);
+    try {
+      // send 1/10 of the balance to a zero address
+      const receiver = "tb1qw2c3lxufxqe2x9s4rdzh65tpf4d7fssjgh8nv6"; // testnet faucet
+      const balance = await btcWallet.getBalance();
+      const amountToSend = 800n; // 0.00000800 BTC = 800 satoshi
+      const feePerByte = 1n; // use a fee provider to get a more accurate fee estimate - otherwise check minimum fee manually
+
+      // create a transaction request
+      const txRequest = await btcWallet.populateTransaction({
+        to: receiver,
+        value: amountToSend,
+        feePerByte,
+      });
+
+      // sign the transaction locally & send it to the network once we have the full signature
+      const tx = await btcWallet.sendTransaction(txRequest);
+      console.log("tx", tx.hash);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    // ...
+    <button onClick={sendBitcoinTransaction} disabled={isLoading}>
+      Send Bitcoin yay
+    </button>
+    // ...
+  );
+}
+```
