@@ -11,7 +11,6 @@ The goal of this tutorial is to create a simple web app that demonstrate how to 
 
 ```sh
 npm create vite@latest MyMPCApp -- --template react-ts
-
 cd MyMPCApp
 npm install
 npm run dev
@@ -135,26 +134,26 @@ import { ethers } from "ethers";
 
 // REMARK: Use should use your own ethers provider - this is just for demo purposes
 const ethereumProvider = new ethers.providers.JsonRpcProvider(
-  "https://ethereum-sepolia.publicnode.com"
+  "https://ethereum-sepolia.publicnode.com",
 );
 
 export default function Mpc() {
   // ...
 
   const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
-    null
+    null,
   );
   useEffect(() => {
     if (!keyShare) return;
     (async () => {
       const signConnection = await pierMpc.establishConnection(
-        SessionKind.SIGN
+        SessionKind.SIGN,
       );
       const ethWallet = new PierMpcEthereumWallet(
         keyShare,
         signConnection,
         pierMpc,
-        ethereumProvider
+        ethereumProvider,
       );
       setEthWallet(ethWallet);
     })();
@@ -233,13 +232,13 @@ export default function Mpc() {
     if (!keyShare) return;
     (async () => {
       const signConnection = await pierMpc.establishConnection(
-        SessionKind.SIGN
+        SessionKind.SIGN,
       );
       const btcWallet = new PierMpcBitcoinWallet(
         keyShare,
         PierMpcBitcoinWalletNetwork.Testnet,
         signConnection,
-        pierMpc
+        pierMpc,
       );
       setBtcWallet(btcWallet);
     })();
