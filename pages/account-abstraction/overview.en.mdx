@@ -1,34 +1,55 @@
-## Architecture & Concept
+import Image from "next/image";
 
-## Smart contract wallets unlock many benefits for the user
+## What You Can Achieve with Account Abstraction at Pier
 
-- flexible security rules
-- recover your account if you lose the keys
-- share your account security across trusted devices or individuals
-- pay someone else's gas, or have someone else pay yours
-- batch transactions together (e.g. approve and execute a swap in one go)
-- more opportunities for dapps and wallet developers to innovate on user experiences
+Account abstraction is a transformative technology! It enables the creation of smart contract wallets, offering all the capabilities of standard wallets but with the significant advantage of customizable security features. This results in wallets that are not only more secure but also more adaptable and user-friendly.
 
-## Examples of security logic that can be built into a smart contract wallets
+Features include:
 
-- **Multisig authorization**: You can share authorization credentials across multiple trusted people or devices. Then the contract can be configured so that transactions of more than some preset value require authorization from a certain proportion (e.g. 3/5) of the trusted parties. For example, high value transactions might require approval from both a mobile device and a hardware wallet, or signatures from accounts distributed to trusted family members.
-- **Account freezing**: If a device is lost or compromised the account can be locked from another authorized device, protecting the user's assets.
-- **Account recovery**: Lost a device or forgotten a password? In the current paradigm this means your assets could be frozen forever. With a smart contract wallet, you can set some pre-approved accounts that can authorize new devices and reset access.
-- **Set transaction limits**: specify daily thresholds for how much value can be transferred from the account in a day/week/month. This means if an attacker does gain access to your account they can't drain everything at once and you have opportunities to freeze and reset access.
-- **Create whitelists**: only allow transactions to certain addresses that you know to be safe. This means that *even if* your private key was stolen, the attacker could not send funds to non-whitelisted destination accounts. These whitelists would require multiple signatures to change them so that an attacker couldn't add their own address to the list unless they had access to several of your backup keys.
+- Configurable security options
+- Integration with Single Sign-On (SSO) and other authentication systems
+- Compatibility with Ledger and other hardware wallets
+- Elimination of seed phrases and private key management
+- Gas fee management with no requirement for ETH/native token balance
+- Simplified transaction process without nonce tracking
+- Immediate transaction processing without waiting for confirmations
+- Reduced concerns about transaction issues like stuck transactions, gas prices, failures, order, and batching
+
+## pier's account abstraction platform for regular use cases
+
+For straightforward applications, we recommend our basic setup, which offers substantial flexibility and security:
+
+- Non-custodial user wallets
+- No seed phrases or private keys
+- Simplified gas fee management
+- Hassle-free blockchain transaction handling
+
+<Image
+  src="/images/account-abstraction-simple.svg"
+  alt="Account Abstraction"
+  width={600}
+  height={500}
+/>
+
+## pier's account abstraction platform for financial institutions and enterprises
+
+For more intricate setups requiring top-tier security, we offer enhanced features like:
+
+- **Multisig Authorization**: Share authorization across multiple entities. Transactions above a certain value require consent from a specified number of parties.
+- **Account Freezing**: Lock the account from an authorized device if a device is lost or compromised.
+- **Account Recovery**: Authorize new devices and reset access using pre-approved accounts.
+- **Transaction Limits**: Set daily/weekly/monthly limits to safeguard against unauthorized large withdrawals.
+- **Whitelists Creation**: Restrict transactions to pre-approved addresses. Whitelists require multiple signatures for modifications, adding an extra layer of security.
+
+<Image
+  src="/images/account-abstraction-complex.svg"
+  alt="Account Abstraction"
+  width={600}
+  height={500}
+/>
 
 ## Theory behind Account Abstraction
 
-Users interact with Ethereum using **[externally owned accounts (EOAs)](https://ethereum.org/en/glossary/#eoa)**. This is the only way to start a transaction or execute a smart contract. This limits how users can interact with Ethereum. For example, it makes it difficult to do batches of transactions and requires users to always keep an ETH balance to cover gas.
+Users typically interact with Ethereum via [externally owned accounts (EOAs)](https://ethereum.org/en/glossary/#eoa) , the standard for initiating transactions or executing smart contracts. This model limits user interaction with the Ethereum network, such as in batching transactions or maintaining an ETH balance for gas.
 
-Account abstraction is a way to solve these problems by allowing users to flexibly program more security and better user experiences into their accounts. This can happen by using smart contracts so they can store digital assets and conduct transactions directly on the blockchain.
-
-## Functions and features
-
-pier's SDK has one main entry point:
-
-- **smartwallet**: handles the creation and management of smartwallets and gives access to the different parts of the SDK
-- **blockchain**: handles the assembly of blockchain related transactions - send, swap, etc.
-- **relayer**: handles the communication of signed transactions to the relayer and blockchain
-- **external**: handles communication to external services - transaction history, token prices, etc.
-- **dumbwallet-manager**: handles the storage and management of the private keys of the dumbwalletss
+Account abstraction offers a solution by enabling users to infuse their accounts with advanced security and improved user experiences through smart contract utilization. This approach allows for direct asset storage and transaction execution on the blockchain.
