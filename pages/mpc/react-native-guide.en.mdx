@@ -15,20 +15,21 @@ npx create-expo-app -t expo-template-blank-typescript MyMPCApp
 cd MyMPCApp
 
 npm run ios
-# npm run android
+# or
+npm run android
 ```
 
 ### Add dependencies
 
 Add dependencies for the MPC library
 
-```sh
+```sh nnpm2yarn copy
 npm i @pier-wallet/mpc-lib
 ```
 
 Add dependencies to make node stuff work on react native (polyfills)
 
-```sh
+```sh npm2yarn copy
 npm i @craftzdog/react-native-buffer stream-browserify react-native-quick-crypto react-native-quick-base64 react-native-url-polyfill
 ```
 
@@ -59,8 +60,7 @@ module.exports = function (api) {
 
 ### Apply polyfills
 
-```tsx
-// App.tsx
+```tsx copy filename="App.tsx"
 import "react-native-url-polyfill/auto";
 ```
 
@@ -71,10 +71,7 @@ import "react-native-url-polyfill/auto";
 Wrap your app in pier MPC provider.
 _Important_: make sure you import PierMpcProvider before you import any Component that uses it (e.g. Mpc.tsx). This is needed because PierMpcProvider includes some polyfills.
 
-```tsx
-// App.tsx
-import "react-native-url-polyfill/auto";
-
+```tsx copy filename="App.tsx"
 import { PierMpcProvider } from "@pier-wallet/mpc-lib/dist/package/react-native";
 
 import React from "react";
@@ -92,19 +89,13 @@ export default function App() {
 
 ### Create a simple MPC wallet page
 
-```tsx
-// Mpc.tsx
+```tsx copy filename="Mpc.tsx"
 import { KeyShare, SessionKind } from "@pier-wallet/mpc-lib";
 import { Button, View, Text } from "react-native";
 import { useEffect, useState } from "react";
 import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/dist/package/ethers-v5";
 import { ethers } from "ethers";
 import { usePierServerVault } from "./pier-mpc-provider";
-
-// REMARK: Use should use your own ethers provider - this is just for demo purposes
-const ethereumProvider = new ethers.providers.JsonRpcProvider(
-  "https://ethereum-sepolia.publicnode.com",
-);
 
 export default function Mpc() {
   const pierMpcVaultSdk = usePierServerVault();
@@ -163,22 +154,19 @@ export default function Mpc() {
 
 This involves complex math and will take around 4 seconds.
 
-```tsx
-// Mpc.tsx
+```tsx copy filename="Mpc.tsx"
 import { KeyShare, SessionKind } from "@pier-wallet/mpc-lib";
 // ...
 export default function Mpc() {
   // ...
-  const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  // ...
   const generateKeyShare = async () => {
     try {
       console.log("generating local key share...");
-      const tempKeyShare = await pierMpc.generateKeyShare();
+      const [mainKeyShare, backupKeyShare] = await pierMpc.generateKeyShare2of3();
 
-      console.log("local key share generated.", tempKeyShare.publicKey);
-      setKeyShare(tempKeyShare);
+      console.log("local key share generated.", mainKeyShare.publicKey);
+      // you should save backupKeyShare as well but we will focus only on the mainKeyShare in this tutorial
+      setKeyShare(mainKeyShare);
     } catch (e) {
       console.error(e);
     }
@@ -203,14 +191,13 @@ export default function Mpc() {
 
 Install ethers to work with Ethereum - ethereum wallet is based on ethers v5 and implements `ethers.Signer` API.
 
-```sh
+```sh npm2yarn copy
 npm i ethers@^5.7.2
 ```
 
 ### Create a wallet
 
-```tsx
-// Mpc.tsx
+```tsx copy filename="Mpc.tsx"
 import { ethers } from "ethers";
 // REMARK: Use should use your own ethers provider - this is just for demo purposes
 const ethereumProvider = new ethers.providers.JsonRpcProvider(
@@ -227,13 +214,14 @@ export default function Mpc() {
     if (!keyShare) return;
     (async () => {
       const signConnection = await pierMpc.establishConnection(
-        SessionKind.SIGN
+        SessionKind.SIGN,
+        keyShare.partiesParameters,
       );
       const ethWallet = new PierMpcEthereumWallet(
         keyShare,
         signConnection,
         pierMpc,
-        ethereumProvider
+        ethereumProvider,
       );
       setEthWallet(ethWallet);
     })();
@@ -255,8 +243,7 @@ export default function Mpc() {
 
 **Important: This transaction will take around 4 seconds.**
 
-```tsx
-// Mpc.tsx
+```tsx copy filename="Mpc.tsx"
 // ...
 
 export default function Mpc() {
@@ -266,7 +253,7 @@ export default function Mpc() {
 
     setIsLoading(true);
     try {
-      // send 1/10 of the balance to a zero address
+      // send 1/10 of the balance to the zero address
       const receiver = ethers.constants.AddressZero;
       const balance = await ethWallet.getBalance();
       const amountToSend = balance.div(10);
@@ -300,8 +287,7 @@ export default function Mpc() {
 
 ### Create a Bitcoin wallet
 
-```tsx
-// Mpc.tsx
+```tsx copy filename="Mpc.tsx"
 import {
   PierMpcBitcoinWallet,
   PierMpcBitcoinWalletNetwork,
@@ -316,6 +302,7 @@ export default function Mpc() {
     (async () => {
       const signConnection = await pierMpc.establishConnection(
         SessionKind.SIGN,
+        keyShare.partiesParameters,
       );
       const btcWallet = new PierMpcBitcoinWallet(
         keyShare,
@@ -341,9 +328,7 @@ export default function Mpc() {
 
 This involves complex math and will take around 4 seconds.
 
-```tsx
-// Mpc.tsx
-
+```tsx copy filename="Mpc.tsx"
 export default function Mpc() {
   // ...
 
