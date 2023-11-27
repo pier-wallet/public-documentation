@@ -20,7 +20,7 @@ npm run dev
 
 Add dependencies for the pier MPC library
 
-```sh
+```sh npm2yarn copy
 npm i @pier-wallet/mpc-lib
 ```
 
@@ -40,14 +40,13 @@ export default defineConfig({
 
 Create a simple page with a button to sign in (MPC is guarded with an authentication wall) and a button to generate a key share:
 
-```tsx
-// App.tsx
+```tsx copy filename="App.tsx"
 import { KeyShare, SessionKind, PierMpcVaultSdk } from "@pier-wallet/mpc-lib";
 import { createPierMpcSdkWasm } from "@pier-wallet/mpc-lib/wasm";
 import { useEffect, useState } from "react";
 
 const pierMpc = new PierMpcVaultSdk(createPierMpcSdkWasm());
-export default function Mpc() {
+export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
 
@@ -86,10 +85,8 @@ export default function Mpc() {
 
 Now, let's add the key share generation logic. This involves complex math and will take around 4 seconds.
 
-```tsx
-// App.tsx
-
-export default function Mpc() {
+```tsx copy filename="App.tsx"
+export default function App() {
   // ...
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
   const generateKeyShare = async () => {
@@ -121,14 +118,13 @@ export default function Mpc() {
 
 Install ethers to work with Ethereum - ethereum wallet is based on ethers v5 and implements `ethers.Signer` API.
 
-```sh
+```sh npm2yarn copy
 npm i ethers@^5.7.2
 ```
 
 ### Create a wallet
 
-```tsx
-// App.tsx
+```tsx copy filename="App.tsx"
 import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/ethers-v5";
 import { ethers } from "ethers";
 
@@ -137,7 +133,7 @@ const ethereumProvider = new ethers.providers.JsonRpcProvider(
   "https://ethereum-sepolia.publicnode.com",
 );
 
-export default function Mpc() {
+export default function App() {
   // ...
 
   const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
@@ -175,10 +171,8 @@ export default function Mpc() {
 
 **Important: This transaction signing will take around 4 seconds.**
 
-```tsx
-// App.tsx
-
-export default function Mpc() {
+```tsx copy filename="App.tsx"
+export default function App() {
   //  ...
   const sendEthereumTransaction = async () => {
     if (!ethWallet) return;
@@ -217,15 +211,14 @@ export default function Mpc() {
 
 ### Create a Bitcoin wallet
 
-```tsx
-// App.tsx
+```tsx copy filename="App.tsx"
 import {
   PierMpcBitcoinWallet,
   PierMpcBitcoinWalletNetwork,
 } from "@pier-wallet/mpc-lib/bitcoin";
 // ...
 
-export default function Mpc() {
+export default function App() {
   // ...
   const [btcWallet, setBtcWallet] = useState<PierMpcBitcoinWallet | null>(null);
   useEffect(() => {
@@ -258,10 +251,8 @@ export default function Mpc() {
 
 Transaction signing involves complex math and will take around 4 seconds.
 
-```tsx
-// App.tsx
-
-export default function Mpc() {
+```tsx copy filename="App.tsx"
+export default function App() {
   // ...
 
   const sendBitcoinTransaction = async () => {
