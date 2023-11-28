@@ -91,14 +91,14 @@ export default function App() {
 
 ```tsx copy filename="Mpc.tsx"
 import { KeyShare, SessionKind } from "@pier-wallet/mpc-lib";
+import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/dist/package/ethers-v5";
+import { usePierMpc } from "@pier-wallet/mpc-lib/dist/package/react-native";
 import { Button, View, Text } from "react-native";
 import { useEffect, useState } from "react";
-import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/dist/package/ethers-v5";
 import { ethers } from "ethers";
-import { usePierServerVault } from "./pier-mpc-provider";
 
 export default function Mpc() {
-  const pierMpcVaultSdk = usePierServerVault();
+  const pierMpcVaultSdk = usePierMpc();
 
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
   const [isLoading, setIsLoading] = useState(false);
