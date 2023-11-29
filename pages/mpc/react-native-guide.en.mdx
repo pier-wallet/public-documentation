@@ -98,7 +98,7 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
 export default function Mpc() {
-  const pierMpcVaultSdk = usePierMpc();
+  const pierMpc = usePierMpc();
 
   const [keyShare, setKeyShare] = useState<KeyShare | null>(null);
   const [isLoading, setIsLoading] = useState(false);
