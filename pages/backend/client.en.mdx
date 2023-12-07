@@ -1,6 +1,6 @@
-# Create tTPC client
+# Create tRPC client
 
-pier backend is written using [tTPC](https://trpc.io) framework. You can create a client using `@trpc/client`.
+pier backend is written using [tRPC](https://trpc.io) framework. You can create a client using `@trpc/client`.
 
 First install dependencies:
 
@@ -11,13 +11,13 @@ npm i @pier-wallet/relayer @pier-wallet/utils @trpc/client ethers decimal.js
 Then create a client:
 
 ```ts
-import type { Trpc10Router } from "@pier-wallet/relayer";
+import type { Trpc10AppRouter } from "@pier-wallet/relayer";
+import { trpcTransformer } from "@pier-wallet/utils";
 import {
   CreateTRPCProxyClient,
   createTRPCProxyClient,
   httpBatchLink,
 } from "@trpc/client";
-import { trpcTransformer } from "@pier-wallet/utils";
 import { BigNumber } from "ethers";
 import Decimal from "decimal.js";
 
