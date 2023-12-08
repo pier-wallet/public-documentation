@@ -6,6 +6,8 @@
   "mpc": "MPC Wallet",
   "account-abstraction": "Account Abstraction Wallet",
 
+  "backend": "Backend API",
+
   "contact": {
     "title": "Contact ↗",
     "type": "page",

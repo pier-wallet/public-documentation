@@ -1,0 +1,20 @@
+# Mint an NFT
+
+Obtain API key, API secret, and NFT metadata token ID on [pier dashboard](https://dashboard.pierwallet.com). Then, use the following code to mint an NFT. It will mint an NFT with the given `tokenId` and send it to the `targetWalletAddress` on the given `chainId`.
+
+```ts
+const apiKey = "...";
+const apiSecret = "secret_...";
+
+const chainId = 137; // polygon mainnet
+const targetWalletAddress = "0x...";
+const tokenId = "0x...";
+const tx = await client.saas.v1.nfts.mintNftWithApiKey.mutate({
+  chainId,
+  targetWalletAddress,
+  tokenId,
+  apiKey,
+  apiSecret,
+});
+console.log("tx sent:", tx.replaceableTransactionHash);
+```

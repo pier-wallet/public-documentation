@@ -12,11 +12,11 @@ Using pier wallet SDK in your backend is pretty straight forward. Main motivatio
 - You'll need to sign a specific message and send this to pier to confirm the recovery
 - You'll need to use trpc to communicate with pier
 
-```sh
-yarn add @pier-wallet/relayer @pier-wallet/utils @trpc/client:9.27.0 ethers:^5.7.2
+```sh npm2yarn copy
+npm i @pier-wallet/relayer @pier-wallet/utils @trpc/client@9.27.0 ethers@^5.7.2
 ```
 
-```ts
+```ts copy
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AppRouter } from "@pier-wallet/relayer";
@@ -49,7 +49,7 @@ export class PierService {
 
   async recoverWalletWithDefaultGuardian(
     smartWalletAddress: string,
-    newDumbWalletAddress: string
+    newDumbWalletAddress: string,
   ) {
     const signedMessageAuthData = await this.getSignedMessageAuthData();
     await this.trpcClient.mutation(
@@ -58,7 +58,7 @@ export class PierService {
         smartWalletAddress,
         newDumbWalletAddress,
         signedMessageAuthData,
-      }
+      },
     );
   }
 
@@ -71,10 +71,10 @@ export class PierService {
 
     const messageToSign = await this.trpcClient.query(
       "auth/v1/messageToSign",
-      messageParams
+      messageParams,
     );
     const signature = await this.authorizedWallet.signMessage(
-      messageToSign.message
+      messageToSign.message,
     );
 
     return {

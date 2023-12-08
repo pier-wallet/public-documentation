@@ -95,7 +95,6 @@ import { PierMpcEthereumWallet } from "@pier-wallet/mpc-lib/dist/package/ethers-
 import { usePierMpc } from "@pier-wallet/mpc-lib/dist/package/react-native";
 import { Button, View, Text } from "react-native";
 import { useEffect, useState } from "react";
-import { ethers } from "ethers";
 
 export default function Mpc() {
   const pierMpc = usePierMpc();
@@ -162,7 +161,8 @@ export default function Mpc() {
   const generateKeyShare = async () => {
     try {
       console.log("generating local key share...");
-      const [mainKeyShare, backupKeyShare] = await pierMpc.generateKeyShare2of3();
+      const [mainKeyShare, backupKeyShare] =
+        await pierMpc.generateKeyShare2of3();
 
       console.log("local key share generated.", mainKeyShare.publicKey);
       // you should save backupKeyShare as well but we will focus only on the mainKeyShare in this tutorial
@@ -199,7 +199,7 @@ npm i ethers@^5.7.2
 
 ```tsx copy filename="Mpc.tsx"
 import { ethers } from "ethers";
-// REMARK: Use should use your own ethers provider - this is just for demo purposes
+// REMARK: Use should use your own ethers provider URL - this is just for demo purposes
 const ethereumProvider = new ethers.providers.JsonRpcProvider(
   "https://rpc.sepolia.org"
 );
