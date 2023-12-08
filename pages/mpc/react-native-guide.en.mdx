@@ -162,7 +162,7 @@ export default function Mpc() {
     try {
       console.log("generating local key share...");
       const [mainKeyShare, backupKeyShare] =
-        await pierMpc.generateKeyShare2of3();
+        await pierMpc.generateKeyShare2Of3();
 
       console.log("local key share generated.", mainKeyShare.publicKey);
       // you should save backupKeyShare as well but we will focus only on the mainKeyShare in this tutorial
