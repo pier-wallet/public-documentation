@@ -201,14 +201,14 @@ npm i ethers@^5.7.2
 import { ethers } from "ethers";
 // REMARK: Use should use your own ethers provider URL - this is just for demo purposes
 const ethereumProvider = new ethers.providers.JsonRpcProvider(
-  "https://rpc.sepolia.org"
+  "https://rpc.sepolia.org",
 );
 
 export default function Mpc() {
   // ...
 
   const [ethWallet, setEthWallet] = useState<PierMpcEthereumWallet | null>(
-    null
+    null,
   );
   useEffect(() => {
     if (!keyShare) return;
@@ -229,7 +229,7 @@ export default function Mpc() {
 
   return (
     // ...
-    <Text>Text selectable>ETH Address: {ethWallet?.address}</Text>
+    <Text selectable>ETH Address: {ethWallet?.address}</Text>
     // ...
   );
 }
