@@ -30,7 +30,7 @@ npm i @pier-wallet/mpc-lib
 Add dependencies to make node stuff work on react native (polyfills)
 
 ```sh npm2yarn copy
-npm i @craftzdog/react-native-buffer stream-browserify react-native-quick-crypto react-native-quick-base64 react-native-url-polyfill
+npm i @craftzdog/react-native-buffer stream-browserify react-native-quick-crypto react-native-quick-base64
 ```
 
 ### Update configs
@@ -56,12 +56,6 @@ module.exports = function (api) {
     ],
   };
 };
-```
-
-### Apply polyfills
-
-```tsx copy filename="App.tsx"
-import "react-native-url-polyfill/auto";
 ```
 
 ## Generate a key share (2 out of 3)
