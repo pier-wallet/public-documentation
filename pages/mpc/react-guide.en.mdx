@@ -1,3 +1,5 @@
+import { Callout } from "nextra/components";
+
 # Tutorial for a wallet using MPC
 
 The goal of this tutorial is to create a simple web app that demonstrate how to use the pier MPC library:
@@ -208,6 +210,31 @@ export default function App() {
 ```
 
 ## Bitcoin wallet
+
+### Polyfills
+
+<Callout emoji="⚠️">
+  <span>
+    `PierMpcBitcoinWallet` is based on
+    [`bitcore-lib`](https://www.npmjs.com/package/bitcore-lib) which is a
+    node.js library, so we need to polyfill some node.js globals.
+
+    If you don't
+    want to use `bitcore-lib`, you can sign raw Bitcoin sighashes using `pierMpc.sign`.
+
+  </span>
+</Callout>
+
+```sh npm2yarn copy
+npm i vite-plugin-node-polyfills -D
+```
+
+```ts filename="vite.config.ts"
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+export default {
+  plugins: [nodePolyfills()],
+};
+```
 
 ### Create a Bitcoin wallet
 
