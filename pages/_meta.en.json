@@ -1,12 +1,13 @@
 {
   "index": "Introduction",
-  "background": "Background",
+  "background": "Theory",
   "getting-started": "Getting started",
 
-  "mpc": "MPC Wallet",
   "account-abstraction": "Account Abstraction Wallet",
+  "multi-signature": "Multi-Signature Wallet",
+  "mpc": "MPC Wallet",
 
-  "backend": "Backend API",
+  "faq": "FAQ",
 
   "contact": {
     "title": "Contact ↗",

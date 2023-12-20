@@ -1,17 +1,9 @@
 import React from "react";
+import Image from "next/image";
 import { DocsThemeConfig } from "nextra-theme-docs";
-import PierLogo from "./public/images/pier_icon-4_black.svg";
 const config: DocsThemeConfig = {
   logo: (
-    <img
-      src={"/images/pier_icon-4_black.svg"}
-      alt="Pier Logo"
-      style={{
-        width: "2rem",
-        height: "2rem",
-        marginRight: "10px",
-      }}
-    />
+    <Image src={"/images/pier.png"} alt="Pier Logo" width={100} height={100} />
   ),
   docsRepositoryBase: "https://github.com/pier-wallet/public-documentation",
   useNextSeoProps() {

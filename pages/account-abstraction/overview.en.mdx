@@ -1,19 +1,18 @@
 import Image from "next/image";
 
-## What You Can Achieve with Account Abstraction at Pier
+## What you can achieve with Account Abstraction at pier
 
-Account abstraction is a transformative technology! It enables the creation of smart contract wallets, offering all the capabilities of standard wallets but with the significant advantage of customizable security features. This results in wallets that are not only more secure but also more adaptable and user-friendly.
+Account abstraction eliminates the need for users to manage cumbersome seed phrases, making onboarding more user-friendly. Instead, users can leverage familiar sign-in methods such as social logins or username and password combinations, offering an easily recognizable experience. Additionally, the utilization of biometrics for login adds an extra layer of convenience and security. Account abstraction also removes the burden of handling gas fees, allowing businesses to cover transaction costs on behalf of their users. In the event of lost access, new recovery methods such as social recovery and integration with authenticator apps provide reliable and secure alternatives.
 
 Features include:
 
-- Configurable security options
-- Integration with Single Sign-On (SSO) and other authentication systems
-- Compatibility with Ledger and other hardware wallets
-- Elimination of seed phrases and private key management
-- Gas fee management with no requirement for ETH/native token balance
-- Simplified transaction process without nonce tracking
-- Immediate transaction processing without waiting for confirmations
+- Seamless and automated wallet creation, tailored to your products needs. Can be completely invisible if desired or integrated with SSO.
+- Configuration of wallet properties (e.g. default guardian, default recovery, whitelisting, etc)
+- A paymaster to pay for gas fees on behalf of your users
+- Simplified & immediate transaction process without nonce tracking or waiting for confirmations
 - Reduced concerns about transaction issues like stuck transactions, gas prices, failures, order, and batching
+- Progressive security set up: from no security to advanced security with social recovery, multi-sig or authenticator recovery - tailor it to your user's needs
+- After successful implementation, a dashboard gives you a detailed overview of your usage of the pier platform.
 
 ## pier's account abstraction platform for regular use cases
 
@@ -30,26 +29,3 @@ For straightforward applications, we recommend our basic setup, which offers sub
   width={600}
   height={500}
 />
-
-## pier's account abstraction platform for financial institutions and enterprises
-
-For more intricate setups requiring top-tier security, we offer enhanced features like:
-
-- **Multisig Authorization**: Share authorization across multiple entities. Transactions above a certain value require consent from a specified number of parties.
-- **Account Freezing**: Lock the account from an authorized device if a device is lost or compromised.
-- **Account Recovery**: Authorize new devices and reset access using pre-approved accounts.
-- **Transaction Limits**: Set daily/weekly/monthly limits to safeguard against unauthorized large withdrawals.
-- **Whitelists Creation**: Restrict transactions to pre-approved addresses. Whitelists require multiple signatures for modifications, adding an extra layer of security.
-
-<Image
-  src="/images/account-abstraction-complex.svg"
-  alt="Account Abstraction"
-  width={600}
-  height={500}
-/>
-
-## Theory behind Account Abstraction
-
-Users typically interact with Ethereum via [externally owned accounts (EOAs)](https://ethereum.org/en/glossary/#eoa) , the standard for initiating transactions or executing smart contracts. This model limits user interaction with the Ethereum network, such as in batching transactions or maintaining an ETH balance for gas.
-
-Account abstraction offers a solution by enabling users to infuse their accounts with advanced security and improved user experiences through smart contract utilization. This approach allows for direct asset storage and transaction execution on the blockchain.
