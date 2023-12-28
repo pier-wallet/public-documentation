@@ -62,13 +62,13 @@ export type SecureDataKeys = {
 export class SecureStorage implements ISecureKeyValueStore {
   save = async <K extends keyof SecureDataKeys>(
     key: string,
-    data: SecureDataKeys[K]
+    data: SecureDataKeys[K],
   ) => {
     await SecureStore.setItemAsync(key, JSON.stringify(data));
   };
 
   load = async <K extends keyof SecureDataKeys>(
-    key: string
+    key: string,
   ): Promise<SecureDataKeys[K] | null> => {
     const dataString = await SecureStore.getItemAsync(key);
     if (dataString) {
@@ -108,7 +108,7 @@ export class PierWalletStorage {
   async saveWallet(
     userId: string,
     wallet: SerializableWalletType,
-    dumbWallet: WalletType["dumbWallet"]
+    dumbWallet: WalletType["dumbWallet"],
   ) {
     await secureStorage.save(namespacedWalletName(userId), wallet);
     await dumbWalletManager.saveDumbWallet({
@@ -123,7 +123,7 @@ export class PierWalletStorage {
   }
 
   async getDumbWallet(
-    smartWalletAddress: string
+    smartWalletAddress: string,
   ): Promise<WalletType["dumbWallet"] | null> {
     const dumbWallet = await dumbWalletManager.loadLatestDumbWallet({
       smartWalletAddress,
@@ -170,7 +170,7 @@ const createAndDeployWallet = async (userId: string) => {
   await pierWalletStorage.saveWallet(
     userId,
     pierWallet,
-    createdWallet.dumbWallet
+    createdWallet.dumbWallet,
   );
 
   const pimpedPierWallet: WalletType = {
@@ -226,7 +226,7 @@ const recoverWalletWithDefaultGuardian = async (userId: string) => {
   // TODO: Implement PierAPI in YOUR code to call YOUR backend
   await PierApi.recoverWalletWithDefaultGuardian(
     pierWallet.smartWalletAddress,
-    dumbWallet.address
+    dumbWallet.address,
   );
 
   return pierWallet;
@@ -239,7 +239,7 @@ const recoverWalletWithDefaultGuardian = async (userId: string) => {
 export const redeemCode = async (
   smartWalletAddress: string,
   smartWalletName: string,
-  accessCode: string
+  accessCode: string,
 ) => {
   const txs = await pierWalletSDK.wallet.referrals.redeemCode({
     smartWalletAddress,
@@ -251,8 +251,8 @@ export const redeemCode = async (
     txs.map(({ transaction }) =>
       pierWalletSDK.transactions.getTransactionConfirmation({
         replaceableTransactionHash: transaction.replaceableTransactionHash,
-      })
-    )
+      }),
+    ),
   );
 };
 ```
@@ -277,7 +277,7 @@ if (loadedSmartWallet) {
     // Option A: saved but not deployed --> wait for deployment (or deploy?)
   }
   const dumbWallet = await pierWalletStorage.getDumbWallet(
-    loadedSmartWallet.smartWalletAddress
+    loadedSmartWallet.smartWalletAddress,
   );
 
   // Option B: saved and deployed, but not owned --> recover

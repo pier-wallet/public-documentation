@@ -1,8 +1,7 @@
 {
   "overview": "Overview & Architecture",
-  "react-native-guide": "React Native Guide",
-  "backend-guide": "Backend Guide",
   "work-with-pier": "Working with the SDK",
-  "sdk-functions": "SDK Functions",
-  "backend": "Backend"
+
+  "react-native-guide": "React Native Guide",
+  "sdk-functions": "SDK Functions"
 }

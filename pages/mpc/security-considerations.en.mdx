@@ -1,15 +1,3 @@
-# Implementation Checklist
-
-Before you start integrating the SDK, make sure you have the following decided - we're here to help:
-
-- [ ] Are you building on mobile or web?
-- [ ] Where do you store your user's key shares?
-- [ ] Do you allow your users to back up their key shares on your DB?
-- [ ] Do you allow your users to back up their key shares on the cloud?
-- [ ] Do you propagate user authentication to pier using SAML 2.0 or do you use pier's authentication?
-- [ ] Do you want a 2/2 or 2/3 signature setup?
-- [ ] Do you want to allow re-generation of key shares? Be aware: if you allow re-generation of key shares, the old keyshares can still be used by bad actors.
-
 ## Security considerations
 
 - We (pier) are not responsible for storing the user shares & backups - we can only give advice on how this can best be achieved
