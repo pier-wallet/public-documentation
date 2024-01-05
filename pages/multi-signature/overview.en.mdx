@@ -12,3 +12,25 @@ For businesses and financial institutions requiring top-tier security, we offer 
 - **Whitelists Creation**: Restrict transactions to pre-approved addresses. Whitelists require multiple signatures for modifications, adding an extra layer of security.
 
 <Image src={MultiSig} alt="Account Abstraction" width={600} height={500} />
+
+## What are multisignature wallets and what can you achieve with them?
+
+In the world of Web3, where decentralized systems and self-custody reign supreme, the custody of digital assets serves as the bedrock of any project. Self-custody not only empowers individuals with full control over their assets but also harnesses the benefits of blockchain technology, including transparency, traceability, and unique digital ownership.
+
+However, usually, self-custody means that one individual holds a private key to a public key / wallet. When one person holds the private key to a wallet, it concentrates the control and responsibility for accessing and managing the funds in the hands of that individual. This scenario poses a significant risk because if that sole private key is lost, stolen, or compromised in any way, it could result in irreversible loss of access to the funds stored in the wallet, leading to potential financial loss for the owner. Additionally and independent of advanced recovery options, it creates a single point of failure, making the wallet more vulnerable to hacking attempts or human error.
+For institutions, this is not an acceptable solution.
+
+Introducing multisignature wallets. A multisignature (multisig) wallet refers to a type of blockchain wallet that requires multiple private keys to authorize and execute transactions. This added layer of security provides more control and reduces the risk of unauthorized access or misuse of funds.
+
+**Let's break down how pier's multisig wallet functions:**
+
+- **Multiple Signatures Required**: A multisig wallet is set up to require more than one signature (private key) to authorize any outgoing transaction. For instance, a 2-of-3 multisig wallet means that out of three authorized parties, at least two must sign off on a transaction for it to be processed. The individual set up is configurable.
+- **Creation of Multisig Address**: When setting up the wallet, a unique multisig address is generated based on the wallet's unique name. During the creation, the wallet can already be configured in terms of signers that are part of it.
+- **Private Key Distribution**: Each authorized party involved in the multisig arrangement holds a private key. These keys are kept secure and are not known to anyone else outside of the authorized parties. It is important to note, that these parties do not need to hold any assets - the signer wallets can be empty and only be used for process or approval management of the multisig wallet itself.
+- **Transaction Authorization**: To send funds from a multisig address, a transaction is initiated by one of the authorized parties. However, before the transaction is considered valid and executed, it needs to be signed by the required number of participants.
+- **Signing and Broadcast of Transaction**: Once the necessary signatures are collected, the transaction is signed by each participant using their private key. These signatures are then combined and broadcasted to the network, verifying the authenticity and validity of the transaction.
+- **Transaction Execution**: The blockchain network processes the transaction once it receives the required number of valid signatures. The funds are then moved according to the transaction details.
+- **Maintaining signers**: Also after the set up of a given multisig wallet, signers that are part of it can be added or removed. This is managed in the same way as sending of funds: x out of y signers need to approve the updated authorized signers of the multisig wallet.
+- **Recovery**: For additional security besides replacing signers (see “maintaining signers”), social recovery can be added on top so that a completely independent set of signers (e.g. from another department) can recover a multisig wallet and set it up from scratch. This is an optional feature.
+
+Overall, multisig wallets offer added security since an attacker would need to compromise multiple private keys to access the funds, making it significantly more challenging compared to a single private key. They are a powerful tool for enhancing security and establishing trust among multiple parties in managing and transacting with cryptocurrencies or digital assets.
