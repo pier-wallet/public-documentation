@@ -1,10 +1,12 @@
 {
   "index": "Introduction",
-  "background": "Theory",
+  "theory": "Theory",
   "getting-started": "Getting started",
+  "faq": "FAQ",
 
   "--": {
-    "type": "separator"
+    "type": "separator",
+    "title": ""
   },
 
   "account-abstraction": "Account Abstraction Wallet",
@@ -12,21 +14,9 @@
   "mpc": "MPC Wallet",
 
   "---": {
-    "type": "separator"
+    "type": "separator",
+    "title": ""
   },
 
-  "NFTs": "NFTs",
-
-  "----": {
-    "type": "separator"
-  },
-
-  "faq": "FAQ",
-
-  "contact": {
-    "title": "Contact ↗",
-    "type": "page",
-    "href": "https://outlook.office365.com/owa/calendar/pierdemo@pierwallet.com/bookings/",
-    "newWindow": true
-  }
+  "NFTs": "NFTs"
 }

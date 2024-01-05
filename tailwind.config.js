@@ -10,9 +10,6 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      // sans: ["var(--font-gt-flexa)"],
-      // mono: ["var(--font-gt-flexa)"],
-      // serif: ["var(--font-gt-flexa)"],
       sans: ["var(--font-inconsolata)", "sans-serif"],
       mono: ["var(--font-inconsolata)", "monospace"],
       serif: ["var(--font-inconsolata)", "serif"],
