@@ -1,0 +1,157 @@
+# Setting up all dependencies for a React Native MPC app
+
+The goal of this tutorial is to create a simple app that demonstrate how to use the pier MPC library:
+
+- ⛏️ using a simple create expo app (works with bare react native as well)
+
+Full repository can be found on [GitHub](https://github.com/pier-apps/mpc-demo-expo)
+
+## Expo guide
+
+### Initialize a new app
+
+```sh
+npx create-expo-app -t expo-template-blank-typescript MyMPCApp
+
+cd MyMPCApp
+
+npm run ios
+# or
+npm run android
+```
+
+### Add dependencies
+
+Add dependencies for the MPC library
+
+```sh nnpm2yarn copy
+npm i @pier-wallet/mpc-lib @pier-wallet/react-native-cloud-storage expo-secure-store
+```
+
+...and polyfills for node stuff
+
+```sh npm2yarn copy
+npm i @craftzdog/react-native-buffer stream-browserify react-native-quick-crypto react-native-quick-base64 react-native-url-polyfill
+```
+
+### Update configs
+
+```js
+// babel.config.js
+module.exports = function (api) {
+  api.cache(true);
+  return {
+    presets: ["babel-preset-expo"],
+    plugins: [
+      [
+        "module-resolver",
+        {
+          root: ["./"],
+          alias: {
+            crypto: "react-native-quick-crypto",
+            stream: "stream-browserify",
+            buffer: "@craftzdog/react-native-buffer",
+          },
+        },
+      ],
+    ],
+  };
+};
+```
+
+```js
+// app.json
+{
+  'expo': {
+    // ...
+    'plugins': [
+      [
+        'expo-build-properties',
+        {
+          'android': {
+            'compileSdkVersion': 33,
+            'targetSdkVersion': 34,
+            'buildToolsVersion': '34.0.0',
+            'packagingOptions': {
+              'pickFirst': [
+                'lib/x86/libcrypto.so',
+                'lib/x86_64/libcrypto.so',
+                'lib/armeabi-v7a/libcrypto.so',
+                'lib/arm64-v8a/libcrypto.so'
+              ]
+            }
+          },
+          'ios': {
+            'deploymentTarget': '17.0'
+          }
+        }
+      ],
+      '@pier-wallet/react-native-cloud-storage'
+    ],
+    // ...
+    'ios': {
+      'infoPlist': {
+        'RCTAsyncStorageExcludeFromBackup': false,
+        'NSFaceIDUsageDescription': 'We use FaceID to authenticate you to the app'
+      },
+    }
+  }
+}
+```
+
+### Add config and google ID to use react native cloud storage
+
+- For google drive integration, check the [Google Drive Docs](https://react-native-cloud-storage.vercel.app/docs/installation/configure-google-drive) - Make sure you get a Google Web Client ID
+- For expo instructions, check the [Expo Docs](https://react-native-cloud-storage.vercel.app/docs/installation/expo)
+- For bare react native specific, check the [React Native Docs](https://react-native-cloud-storage.vercel.app/docs/installation/react-native)
+
+### Apply polyfills
+
+```tsx copy filename='App.tsx'
+// App.tsx - add this to the top of the file!!
+import "react-native-url-polyfill/auto";
+```
+
+## React native guide
+
+### Add dependencies
+
+Add dependencies for the MPC library
+
+````sh nnpm2yarn copy
+npm i @pier-wallet/mpc-lib @pier-wallet/react-native-cloud-storage rn-secure-storage
+
+...and polyfills for node stuff
+
+```sh npm2yarn copy
+npm i @craftzdog/react-native-buffer stream-browserify react-native-quick-crypto react-native-quick-base64 react-native-url-polyfill
+````
+
+### Update configs
+
+```js
+// metro.config.js
+
+// ...
+const extraNodeModules = {
+  // ...
+  crypto: require.resolve("react-native-quick-crypto"),
+  stream: require.resolve("stream-browserify"),
+  buffer: require.resolve("@craftzdog/react-native-buffer"),
+  // ...
+};
+// ...
+```
+
+### Add config and google ID to use react native cloud storage
+
+- For google drive integration, check the [Google Drive Docs](https://react-native-cloud-storage.vercel.app/docs/installation/configure-google-drive) - Make sure you get a Google Web Client ID
+- For expo instructions, check the [Expo Docs](https://react-native-cloud-storage.vercel.app/docs/installation/expo)
+- For bare react native specific, check the [React Native Docs](https://react-native-cloud-storage.vercel.app/docs/installation/react-native)
+
+### Apply polyfills
+
+```tsx copy filename='App.tsx'
+// App.tsx - add this to the top of the file!!
+import "react-native-url-polyfill/auto";
+```
