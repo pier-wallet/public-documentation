@@ -1,0 +1,64 @@
+import Image from "next/image";
+import TipBox from "../components/TipBox";
+
+## Wallets and Key Management
+
+Blockchain technology predominantly utilizes ECDSA (Elliptic Curve Digital Signature Algorithm) for digital signatures, involving a private and a public key. There are a number of ways to manage this:
+
+<Image
+  src="/images/wallets-overview.png"
+  alt="Wallets and Key Management Overview"
+  width={800}
+  height={600}
+  className="border-2 border-gray-200 rounded-lg mt-10"
+/>
+
+The key elements of a wallet are:
+
+- **Private Key:** A 32-byte integer, typically represented in hash form.
+- **Wallet Address:** Created by hashing (using sha-256 or keccak-256) the public key.
+
+- **Public Key Generation:** Applying the ECDSA algorithm, specifically **secp256k1** (used by Bitcoin and Ethereum), to the private key generates a corresponding public key.
+
+The core function of a wallet is to store a **private key**, enabling the signing of messages and submission of signed transactions on a blockchain. It also tracks the digital values associated with its **public address**. Let's take a look how these different solutions work under the hood from a technical perspective.
+
+<Image
+  src="/images/wallets-technical.png"
+  alt="Wallets and Key Management Overview"
+  width={800}
+  height={600}
+  className="border-2 border-gray-200 rounded-lg"
+/>
+
+## Account Abstraction and Multi-Signature Wallets
+
+Account Abstraction simplifies user interactions on blockchains by treating accounts more like smart contracts. Multi-Signature wallets require multiple keys for authorization, enhancing security.
+
+- **Account Abstraction:**
+  - Accounts behave like smart contracts.
+  - Simplifies transactions and interactions.
+- **Multi-Signature Wallets:**
+  - Require multiple signatures for transactions.
+  - Provide an added layer of security.
+
+<TipBox>
+  💡 Account Abstraction represents a shift from traditional key-pair based
+  accounts to a more flexible contract-based approach.
+</TipBox>
+
+## Multi-Party Computation (MPC) Wallets
+
+Multi-Party Computation (or MPC), is a method to distribute a private key among multiple parties.
+
+- **Key Sharing:** The private key is divided into shares, encrypted, and distributed.
+- **Independent Computation:** Each party computes their share of the key without revealing their portion to others.
+- **Decentralized Key Storage:** The private key is never fully formed in a single location.
+
+This approach mitigates the risk of a single point of failure, as seen in traditional wallets where a compromised device could lead to asset theft.
+
+<TipBox>
+  🔒 With MPC, hacking a wallet requires breaching multiple, diverse systems
+  simultaneously, significantly increasing security.
+</TipBox>
+
+MPC solutions like MPC-CMP and MPC-GG20 are fast and widely adopted methods for implementing such decentralized key management systems.

@@ -1,6 +1,7 @@
 {
   "overview": "Overview & Architecture",
-  "implementation-checklist": "Implementation Checklist",
-  "react-native-guide": "React Native Guide",
-  "react-guide": "React Guide"
+  "react-native-prep": "React Native Setup",
+  "react-native-quickstart": "React Native Quickstart",
+  "react-native-additional": "React Native Additional Features",
+  "react-guide": "React (Web) Guide"
 }

@@ -1,0 +1,67 @@
+# Actors
+ partner: "" {
+  employees: "Employees / wallets allowed to initiate / sign transactions" {
+      employee1: "" {
+        shape: Person
+      }
+      employee2: "" {
+        shape: Person
+        shape: Person
+      }
+      
+  }
+  employee_wallets: "" {
+    employee1: personal ledger / HW wallet
+    employee2: personal ledger / HW wallet
+    
+  }
+
+  admins: "Employees / wallets allowed to add / remove signers" {
+      admin1: "" {
+        shape: Person
+      }
+      admin2: "" {
+        shape: Person
+      }
+     
+  }
+  admin_wallets: "" {
+    admin1: personal ledger / HW wallet
+    admin2: personal ledger / HW wallet
+    
+  }
+
+  frontend: Partner Branded Multisig Wallet {
+    other: Multisig UI
+  }
+  
+}
+
+waas: Pier wallet as a service Platform {
+  db: Relayer Data Store for partner dashboard {
+	shape: cylinder
+  }
+}
+
+
+blockchain: Blockchain {
+  pier: pier contracts{
+    access_control: Access Control / Multisig
+    transactions: Transactions
+    whitelist: Whitelist
+    limits: Limits
+    eip_1271: EIP 1271
+    eip_712: EIP 712
+  }
+}
+
+# Interactions
+partner.employees.employee1 -> partner.employee_wallets.employee1 -> partner.frontend: Transaction Requests
+partner.employees.employee2 -> partner.employee_wallets.employee2 -> partner.frontend: Approve / Reject Transaction
+
+partner.admins.admin1 -> partner.admin_wallets.admin1 -> partner.frontend: Admin Requests
+partner.admins.admin2 -> partner.admin_wallets.admin2 -> partner.frontend: Approve / Reject Admin Request
+
+partner.frontend -> waas.db: Store transaction details
+
+partner.frontend -> blockchain.pier: Submit fully signed transaction

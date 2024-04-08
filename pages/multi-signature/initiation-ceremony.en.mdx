@@ -1,0 +1,24 @@
+# How initiate a new enterprise grade multi-signature wallet
+
+## To initiate a pier mutli-signature wallet, a few set of information is required:
+
+- A human readable name for the wallet
+
+- The number of transaction signatories
+- The number of required signatures for a transaction to be valid
+- The public keys & human readable name of the transaction signers
+
+- The number of access right signatories
+- The number of required signatures for an access right change to be valid
+- The public keys & human readable name of the access right change signers
+
+- Whitelist of addresses that can be used as a destination for a transaction
+- A human readable name for each whitelisted address
+
+## Once this informatiuon is gathered off-chain & signed off as part of the implementation project, the wallet can be deployed on-chain:
+
+1. The person destined with an access-right signatory can use pier's UI to set up these parameters
+2. He can then validate the parameters & deploy the wallet on-chain
+3. Any subseqent changes to the wallet parameters can be done by the access-right signatories directly on-chain with pier's UI
+
+{/* Add demo video */}

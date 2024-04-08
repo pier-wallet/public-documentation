@@ -9,6 +9,9 @@ The goal of this tutorial is to create a simple web app that demonstrate how to 
 - 📝 user can sign transactions
 - ⛓️ user can interact with ETH and BTC
 
+Full repository on [GitHub](https://github.com/pier-apps/my-mpc-app-web)
+Demo deployed on [Vercel](https://my-mpc-app-web.vercel.app/)
+
 ## Initialize a new app
 
 ```sh
@@ -23,15 +26,18 @@ npm run dev
 Add dependencies for the pier MPC library
 
 ```sh npm2yarn copy
-npm i @pier-wallet/mpc-lib
+npm i @pier-wallet/mpc-lib vite-plugin-node-polyfills
 ```
 
 Exclude pier wasm from the vite dev server:
 
 ```js
 // vite.config.ts
+import { nodePolyfills } from "vite-plugin-node-polyfills";
+
 export default defineConfig({
   // ...
+  plugins: [react(), nodePolyfills()],
   optimizeDeps: {
     exclude: ["@pier-wallet/mpc-ecdsa-wasm"],
   },

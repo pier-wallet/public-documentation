@@ -1,0 +1,51 @@
+## FAQs on pier's non-custodial wallets, relevant for our multisig and account abstraction customers
+
+### Who has custody of assets in wallets offered by pier?
+
+pier smart contract wallets (including account abstraction & multisignature wallets) are non-custodial crypto wallets based on smart contracts. The wallets allow users to interact with various decentralized services on the blockchain using their private keys. The private keys are only stored locally in encrypted form by the user. At no time does pier have access to a user's smart wallet or its contents, nor does pier have access to the user's private keys, nor can pier obtain access to them. All transactions can only be carried out by the user.
+
+### What functions are made available to users?
+
+A smart wallet allows the user easy handling and technical access to decentralized blockchain services without passing on the custody of their digital assets to third parties. At no time does pier have access to a user's smart contract wallet, nor its contents, nor does pier have access to the user's private keys, nor can pier obtain access to them.
+Decentralized services or dApps allow various activities directly on the blockchain - for example, the exchange of digital assets via so-called decentralized exchanges (hereinafter DEX).
+In addition to the simple use of these decentralized services, the pier platform allows the following technical functions for users:
+
+- Create a smart contract wallet on the Ethereum, Polygon, zk.sync or Harmony blockchain
+- Create & encrypt a wallet key pass, which is stored locally and contains the encrypted private key of the wallet
+- Decrypting the wallet key pass via PIN or FaceID
+- Recovery solutions if the PIN or wallet key pass is lost. The following are offered
+  - Authenticator App Recovery (via One Time Passwords)
+  - Social Recovery (where social contacts are authorized to recover a specific wallet via a given wallet).
+- Sending & receiving digital assets
+- Setting up an address book
+- Technical access to decentralized trading platforms / DEX
+- Technical access to decentralized Proof of Stake investments
+- Technical embedding of FIAT on-ramp services of Ramp Swaps Ltd. The pier platform provides access to this service, but is neither operator nor user of this service. (Ramp Swaps Ltd. Terms of Service: https://ramp.network/terms-of-service/)
+- Access to the transaction history on the blockchain
+
+### Is pier offering additional services to pier wallet app users / B2C users (e.g. wealth management, asset management, financial advisory or password recovery)?
+
+pier offers a technical platform. For end users / consumers, pier does not offer any additional services, in particular no consulting or administrative services.
+
+For businesses customers of our wallet platform, we offer consulting services and implementation support.
+
+### How can B2C users purchase digital assets within the pier wallet app?
+
+pier does not accept money or digital assets at any time. The pier platform provides technical access to FIAT on-ramp services of Ramp Swaps Ltd. but is neither operator nor user of this service. This means that the purchase contract exists directly between the user and Ramp Swaps Ltd. pier has no influence or access to the pricing & terms of Ramp Swaps Ltd. pier does not receive any retrocession from the transactions between the user and Ramp Swaps Ltd. pier has the role of an integrator and plays no role in the exchange process between the user and Ramp Swaps Ltd.
+
+Note: Ramp Swaps Ltd is regulated by the UK Financial Conduct Authority and offers its services to users worldwide. In order to use the on-ramp services, a customer of Ramp Swaps Ltd must undergo a KYC process and can then make a money transfer to Ramp Swaps Ltd via the usual channels (credit card, SWIFT, SEPA). Ramp Swap Ltd converts the corresponding amount of money into digital currencies, which are transferred to the user's wallet. For detailed information, please refer to the Terms of Service of Ramp Swaps Ltd (https://ramp.network/terms-of-service/).
+
+### For Swiss customers only: Does pier intend to obtain a license, recognition, registration or authorization from FINMA or affiliation with a self-regulatory organization under the Anti-Money Laundering Act?
+
+According to our assessment and in alignment with partners, the currently offered activities of pier do not require affiliation to an SRO. Should the situation or business activities change, we will of course re-evaluate this situation.
+
+## FAQs on pier's non-custodial wallets, relevant for our MPC customers
+
+### What are your security practices?
+
+- We (pier) are not responsible for storing the user shares & backups - we can only give advice on how this can best be achieved
+- We (pier) will not hold "enough" keys for us to be classified as "custodian" or any bad actor to be allowed a transaction - this means for example that we will not hold 2 out of 3, only 1 out of 3
+- We (pier) will encrypt key shares - this means that even if someone gets access to our DB, they will not be able to decrypt the key shares
+- We (pier) will not hold backup of "old" / "rotated" keyshares
+- We (pier) will only allow "authenticated by the user" requests
+- We (pier) will allow authentication of users via standard mechanisms - oAuth 2.0 is preferred
